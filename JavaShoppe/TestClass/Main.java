@@ -7,7 +7,7 @@ public class Main {
 		System.out.println("Eric has made it here");
 		System.out.println("One more test");
 		System.out.println("Hello World");
-		System.out.println("Amars Change");
+		System.out.println("Amars second change");
 	}
 
 }
