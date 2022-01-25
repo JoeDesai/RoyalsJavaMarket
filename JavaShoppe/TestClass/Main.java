@@ -26,7 +26,10 @@ public class Main {
 		System.out.println("Im in master");
 
 		
-		System.out.println("I added a branch, Eric's branch");
+		
+		System.out.println("Trying something right now");
+		System.out.println("Made changes and am now on my branch");
+		System.out.println("One more try with a new branch/ Eric");
 	}
 
 }
