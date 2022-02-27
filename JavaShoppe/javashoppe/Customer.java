@@ -9,6 +9,7 @@ public class Customer {
 	private int waitTime;
 	private int totalTime;
 	private int interarrivalTime;
+
 	private int id;
 	public static int num=1;
 	
@@ -16,6 +17,13 @@ public class Customer {
 	public Customer() {
 		id = num;
 		num++;
+  }
+	
+	
+	
+	//empty constructor
+	public Customer() {
+		
 	}
 	
 	//full constructor
@@ -30,6 +38,7 @@ public class Customer {
 	//regular to string
 	public String toString() {
 		return "Customer number: " + id + ", Interarrival Time: " + interarrivalTime +", Service Time: " + serviceTime;
+		return "";
 	}
 	
 	//to string for writing to file
