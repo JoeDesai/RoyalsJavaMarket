@@ -20,12 +20,6 @@ public class Customer {
   }
 	
 	
-	
-	//empty constructor
-	public Customer() {
-		
-	}
-	
 	//full constructor
 	public Customer(int interT, int servT) {
 		serviceTime = servT;
@@ -38,7 +32,6 @@ public class Customer {
 	//regular to string
 	public String toString() {
 		return "Customer number: " + id + ", Interarrival Time: " + interarrivalTime +", Service Time: " + serviceTime;
-		return "";
 	}
 	
 	//to string for writing to file
