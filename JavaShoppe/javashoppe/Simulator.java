@@ -1,11 +1,12 @@
 package javashoppe;
-
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Simulator {
 
 	public static void main(String[] args) {
+
 		LinkedList<Customer> queue1 = new LinkedList<Customer>();
 		LinkedList<Customer> queue2 = new LinkedList<Customer>();
 		LinkedList<Customer> queue3 = new LinkedList<Customer>();
@@ -29,7 +30,7 @@ public class Simulator {
 		System.out.println("Enter the number of customers?");
 		int numCust = scan.nextInt();
 		
-		generateCust(minInterT, maxInterT, minServT, maxServT, numCust);
+    ArrayList<Customer> customers = generateCust(minInterT, maxInterT, minServT, maxServT, numCust);
 		
 		Integer queue1Size = queue1.size();
 		Integer queue2Size = queue2.size();
@@ -78,19 +79,29 @@ public class Simulator {
 		
 	}
 
-	public static void generateCust (int minInterT, int maxInterT, int minServT, int maxServT, int numCust) {
-		
-		for(int i = 0; i < numCust; i ++) {
-			
-			//customer creator??
-			
-			
+
+	public static ArrayList<Customer> generateCust(int minInterT, int maxInterT, int minServT, int maxServT, int numCust) {
+
+		ArrayList<Customer> customers = new ArrayList<>();
+
+		for (int i = 0; i < numCust; i++) {
+
+			// calculates the times between arrival and service time for each customer
+			int arrivalTime = ((int) (Math.random() * (maxInterT-minInterT+1)) + minInterT);
+			int serviceTime = ((int) (Math.random() * (maxServT-minServT+1)) + minServT);
+
+			Customer newCust = new Customer(arrivalTime, serviceTime);
+
+			customers.add(newCust);
+
 		}
+
+		return customers;
+
+	}
 		
 		
 		
 		
 	}
-	
-	
 }

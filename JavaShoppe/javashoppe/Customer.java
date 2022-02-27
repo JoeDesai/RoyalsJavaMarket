@@ -9,6 +9,15 @@ public class Customer {
 	private int waitTime;
 	private int totalTime;
 	private int interarrivalTime;
+
+	private int id;
+	public static int num=1;
+	
+	//empty constructor
+	public Customer() {
+		id = num;
+		num++;
+  }
 	
 	
 	
@@ -21,12 +30,14 @@ public class Customer {
 	public Customer(int interT, int servT) {
 		serviceTime = servT;
 		interarrivalTime = interT;
-		
+		id = num;
+		num++;
 		
 	}
 
 	//regular to string
 	public String toString() {
+		return "Customer number: " + id + ", Interarrival Time: " + interarrivalTime +", Service Time: " + serviceTime;
 		return "";
 	}
 	
