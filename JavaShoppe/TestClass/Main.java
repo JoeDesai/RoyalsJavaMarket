@@ -19,7 +19,11 @@ public class Main {
 		System.out.println("Testing a theory/ Eric");
 		System.out.println("Branch version 2");
 		System.out.println("Amars line 13");
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> branch 'master' of https://github.com/JoeDesai/RoyalsJavaMarket.git
 
 		System.out.println("Joe's branch");
 
