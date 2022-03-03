@@ -18,7 +18,6 @@ public class Simulator {
 		int cat = 0;
 		int custNum = 0;
 
-		int time = 0;
 
 		System.out.println("Enter minimum interarrival time:  ");
 		int minInterT = scan.nextInt();
@@ -86,39 +85,7 @@ public class Simulator {
 		}
 
 
-		while (moreCust) {
-			Customer e = customers.get(time);
-
-			Integer queue1Size = queue1.size();
-			Integer queue2Size = queue2.size();
-			Integer queue3Size = queue3.size();
-			int value1 = 0;
-			int value2 = 0;
-			int value3 = 0;
-
-			value1 = queue1Size.compareTo(queue2Size);
-			if (value1 <= 0) {
-				value2 = queue1Size.compareTo(queue3Size);
-			}
-			if (value2 > 0) {
-				queue3.add(e);
-
-			} else if (value2 <= 0) {
-				queue1.add(e);
-
-			}
-
-			else if (value1 > 0) {
-				value3 = queue2Size.compareTo(queue3Size);
-			}
-			if (value3 > 0) {
-				queue3.add(e);
-
-			} else if (value3 <= 0) {
-				queue2.add(e);
-
-			}
-		}
+		
 	}
 
 	public static ArrayList<Customer> generateCust(int minInterT, int maxInterT, int minServT, int maxServT,
