@@ -1,6 +1,6 @@
 package javashoppe;
 
-public class Customer {
+public class Customer{
 	
 	private int arrivalTime;
 	private int serviceBeginsTime;
@@ -98,8 +98,15 @@ public class Customer {
 	public void setInterarrivalTime(int interarrivalTime) {
 		this.interarrivalTime = interarrivalTime;
 	}
-	
-	
+
+	public int getId() {
+		return id;
+	}
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
 	
 	
 	
