@@ -11,8 +11,6 @@ public class Customer{
 	private int interarrivalTime;
 
 	private int id;
-	
-
 	public static int num=1;
 	
 	//empty constructor
