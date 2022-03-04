@@ -1,6 +1,6 @@
 package javashoppe;
 
-public class Customer {
+public class Customer{
 	
 	private int arrivalTime;
 	private int serviceBeginsTime;
@@ -9,6 +9,8 @@ public class Customer {
 	private int waitTime;
 	private int totalTime;
 	private int interarrivalTime;
+	private char lane;
+	private boolean satisfied;
 
 	private int id;
 	public static int num=1;
@@ -19,12 +21,6 @@ public class Customer {
 		num++;
   }
 	
-	
-	
-	//empty constructor
-	public Customer() {
-		
-	}
 	
 	//full constructor
 	public Customer(int interT, int servT) {
@@ -38,7 +34,6 @@ public class Customer {
 	//regular to string
 	public String toString() {
 		return "Customer number: " + id + ", Interarrival Time: " + interarrivalTime +", Service Time: " + serviceTime;
-		return "";
 	}
 	
 	//to string for writing to file
@@ -59,7 +54,8 @@ public class Customer {
 	}
 
 	public int getServiceBeginsTime() {
-		return serviceBeginsTime;
+		
+		return waitTime + arrivalTime;
 	}
 
 	public void setServiceBeginsTime(int serviceBeginsTime) {
@@ -105,8 +101,39 @@ public class Customer {
 	public void setInterarrivalTime(int interarrivalTime) {
 		this.interarrivalTime = interarrivalTime;
 	}
-	
-	
+
+	public int getId() {
+		return id;
+	}
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+
+	public char getLane() {
+		return lane;
+	}
+
+
+	public void setLane(char lane) {
+		this.lane = lane;
+	}
+
+
+	public boolean isSatisfied() {
+		if(waitTime < 5) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+
+	public void setSatisfied(boolean satisfied) {
+		this.satisfied = satisfied;
+	}
 	
 	
 	
