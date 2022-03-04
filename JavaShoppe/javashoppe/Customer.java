@@ -9,6 +9,8 @@ public class Customer{
 	private int waitTime;
 	private int totalTime;
 	private int interarrivalTime;
+	private char lane;
+	private boolean satisfied;
 
 	private int id;
 	public static int num=1;
@@ -52,7 +54,8 @@ public class Customer{
 	}
 
 	public int getServiceBeginsTime() {
-		return serviceBeginsTime;
+		
+		return waitTime + arrivalTime;
 	}
 
 	public void setServiceBeginsTime(int serviceBeginsTime) {
@@ -106,6 +109,30 @@ public class Customer{
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+
+	public char getLane() {
+		return lane;
+	}
+
+
+	public void setLane(char lane) {
+		this.lane = lane;
+	}
+
+
+	public boolean isSatisfied() {
+		if(waitTime < 5) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+
+	public void setSatisfied(boolean satisfied) {
+		this.satisfied = satisfied;
 	}
 	
 	
