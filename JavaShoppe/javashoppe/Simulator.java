@@ -1,25 +1,24 @@
 package javashoppe;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Simulator {
 
 	public static void main(String[] args) {
 
-		LinkedList<Customer> queue1 = new LinkedList<Customer>();
-		LinkedList<Customer> queue2 = new LinkedList<Customer>();
-		LinkedList<Customer> queue3 = new LinkedList<Customer>();
+		LinkedList queue1 = new LinkedList();
+		LinkedList queue2 = new LinkedList();
+		LinkedList queue3 = new LinkedList();
 		ArrayList<Customer> customers = loadData();
-		ArrayList<LinkedList<Customer>> queues = new ArrayList<>();
+		ArrayList<LinkedList> queues = new ArrayList<>();
 		Customer e = new Customer();
 		ArrayList<String> data = new ArrayList<String>();
 
 		queues.add(queue1);
 		queues.add(queue2);
 		queues.add(queue3);
-		LinkedList<Customer> shortest = queues.get(0);
+		LinkedList shortest = queues.get(0);
 		
 		boolean moreCust = true;
 		int time = 1;
