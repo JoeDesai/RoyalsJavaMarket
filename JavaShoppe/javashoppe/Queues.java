@@ -5,7 +5,7 @@ package javashoppe;
    The LinkedList1 class implements a Linked list.
 */
 
-class LinkedList
+class Queues
 {
     /**
        The Node class stores a list element
@@ -48,7 +48,7 @@ class LinkedList
        Constructor.
     */
     
-    public LinkedList()
+    public Queues()
     {
         first = null;
         last = null;        

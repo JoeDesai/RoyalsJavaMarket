@@ -7,26 +7,38 @@ public class Simulator {
 
 	public static void main(String[] args) {
 
-		LinkedList queue1 = new LinkedList();
-		LinkedList queue2 = new LinkedList();
-		LinkedList queue3 = new LinkedList();
+		Queues queue1 = new Queues();
+		Queues queue2 = new Queues();
+		Queues queue3 = new Queues();
 		ArrayList<Customer> customers = loadData();
-		ArrayList<LinkedList> queues = new ArrayList<>();
+		ArrayList<Queues> queues = new ArrayList<>();
 		Customer e = new Customer();
 		ArrayList<String> data = new ArrayList<String>();
 
 		queues.add(queue1);
 		queues.add(queue2);
 		queues.add(queue3);
-		LinkedList shortest = queues.get(0);
+		Queues shortest = queues.get(0);
+		ArrayList<Integer> notInUse = new ArrayList<>();
+		
+		
+		placeCustomers(customers, e,queues, data, shortest, notInUse);
+		
+
+		printData(data, customers, notInUse.size());
+
+	}
+
+	public static void placeCustomers(ArrayList<Customer> customers, Customer e,
+			ArrayList<Queues> queues, ArrayList<String> data, Queues shortest, ArrayList<Integer> notInUse) {
 		
 		boolean moreCust = true;
 		int time = 1;
 		int cat = 0;
 		int custNum = 0;
 		char letter = 0;
-		int notInUse = 0;
 
+		
 		while (moreCust) {
 
 			// first customer starts at 1 minute always
@@ -58,7 +70,7 @@ public class Simulator {
 						} else {
 							int numInQueue = queues.get(j).size() - 1;
 							e.setWaitTime(queues.get(j).get(numInQueue).getDepartureTime() - time);
-							
+
 						}
 					}
 
@@ -91,16 +103,17 @@ public class Simulator {
 					}
 				}
 			}
-			for (int k =  0; k < queues.size(); k++) {
+			for (int k = 0; k < queues.size(); k++) {
 				if (queues.get(k).size() == 0) {
-					notInUse++;
+					notInUse.add(1);
+					//adds one eliment to the array list equivalent to adding one minute to the time registers are not in use
 				}
 			}
 			time++;
 
 		}
-		printData(data, customers, notInUse);
-
+		
+	
 	}
 
 	public static ArrayList<Customer> loadData() {
@@ -122,6 +135,9 @@ public class Simulator {
 
 		System.out.println("Enter the number of customers?");
 		int numCust = scan.nextInt();
+
+		System.out.println("Percent slower");
+		double perSlower = scan.nextDouble();
 
 		for (int i = 0; i < numCust; i++) {
 
@@ -168,16 +184,17 @@ public class Simulator {
 
 		for (Customer cust : c) {
 			totalWait += cust.getWaitTime();
-			if(cust.isSatisfied()) {
+			if (cust.isSatisfied()) {
 				satisfied++;
-			}else {
+			} else {
 				dissatisfied++;
 			}
-			
+
 		}
-		totalWait = (double) totalWait/ c.size();
-		System.out.println("Average Wait Time: " +  totalWait + "\nTotal time checkouts were not in use: " +notUsedTime
-				+ "\nCustomer Satisfaction: " +satisfied+ " satisfied (<5 min) " +dissatisfied+ " dissatisfied (>=5 min)");
+		totalWait = (double) totalWait / c.size();
+		System.out.println("Average Wait Time: " + totalWait + "\nTotal time checkouts were not in use: " + notUsedTime
+				+ "\nCustomer Satisfaction: " + satisfied + " satisfied (<5 min) " + dissatisfied
+				+ " dissatisfied (>=5 min)");
 
 	}
 
