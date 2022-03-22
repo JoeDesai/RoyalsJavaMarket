@@ -20,25 +20,22 @@ public class Simulator {
 		queues.add(queue3);
 		Queues shortest = queues.get(0);
 		ArrayList<Integer> notInUse = new ArrayList<>();
-		
-		
-		placeCustomers(customers, e,queues, data, shortest, notInUse);
-		
+
+		placeCustomers(customers, e, queues, data, shortest, notInUse);
 
 		printData(data, customers, notInUse.size());
 
 	}
 
-	public static void placeCustomers(ArrayList<Customer> customers, Customer e,
-			ArrayList<Queues> queues, ArrayList<String> data, Queues shortest, ArrayList<Integer> notInUse) {
-		
+	public static void placeCustomers(ArrayList<Customer> customers, Customer e, ArrayList<Queues> queues,
+			ArrayList<String> data, Queues shortest, ArrayList<Integer> notInUse) {
+
 		boolean moreCust = true;
 		int time = 1;
 		int cat = 0;
 		int custNum = 0;
 		char letter = 0;
 
-		
 		while (moreCust) {
 
 			// first customer starts at 1 minute always
@@ -106,14 +103,14 @@ public class Simulator {
 			for (int k = 0; k < queues.size(); k++) {
 				if (queues.get(k).size() == 0) {
 					notInUse.add(1);
-					//adds one eliment to the array list equivalent to adding one minute to the time registers are not in use
+					// adds one eliment to the array list equivalent to adding one minute to the
+					// time registers are not in use
 				}
 			}
 			time++;
 
 		}
-		
-	
+
 	}
 
 	public static ArrayList<Customer> loadData() {
@@ -139,20 +136,10 @@ public class Simulator {
 		System.out.println("Percent slower");
 		double perSlower = scan.nextDouble();
 
-		for (int i = 0; i < numCust; i++) {
+		CustomerCreator letThereBeCustomers = new CustomerCreator(minInterT, maxInterT, minServT, maxServT, numCust,
+				customers);
 
-			// calculates the times between arrival and service time for each customer
-			int arrivalTime = ((int) (Math.random() * (maxInterT - minInterT + 1)) + minInterT);
-			int serviceTime = ((int) (Math.random() * (maxServT - minServT + 1)) + minServT);
-
-			Customer newCust = new Customer(arrivalTime, serviceTime);
-
-			customers.add(newCust);
-			System.out.println(newCust.toString());
-
-		}
-
-		return customers;
+		return letThereBeCustomers.createCustomers();
 
 	}
 
@@ -166,8 +153,9 @@ public class Simulator {
 					+ c.getServiceBeginsTime() + "; Leaves @ " + c.getDepartureTime() + "; Wait: " + c.getWaitTime();
 		}
 
-		String l1 = "	" + c.getId() + " 	| " + c.getArrivalTime() + "	 		  |	" + c.getServiceTime() + "	|  "
-				+ c.getLane() + "  |	" + c.getDepartureTime() + "			  |	" + note;
+		String l1 = "    " + c.getId() + "     | " + c.getArrivalTime() + "               |    " + c.getServiceTime()
+				+ "    |  " + c.getLane() + "  |    " + c.getSelfFull() + "  |    " + c.getDepartureTime()
+				+ "              |    " + note;
 
 		return l1;
 	}
@@ -177,7 +165,7 @@ public class Simulator {
 		int satisfied = 0;
 		int dissatisfied = 0;
 		System.out.println(
-				"\n	Cus #	| Arrival Time (absolute) |Service Time | LOC | Departure Time (absolute) | Notes");
+				"\n    Cus #    | Arrival Time (absolute) |Service Time | LOC | Self/Full | Departure Time (absolute) | Notes");
 		for (String d : data) {
 			System.out.println(d);
 		}

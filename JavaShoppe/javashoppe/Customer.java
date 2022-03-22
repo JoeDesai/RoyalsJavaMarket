@@ -11,6 +11,7 @@ public class Customer{
 	private int interarrivalTime;
 	private char lane;
 	private boolean satisfied;
+	private String selfFull;
 
 	private int id;
 	public static int num=1;
@@ -23,9 +24,10 @@ public class Customer{
 	
 	
 	//full constructor
-	public Customer(int interT, int servT) {
+	public Customer(int interT, int servT, String selfOrFull) {
 		serviceTime = servT;
 		interarrivalTime = interT;
+		selfFull = selfOrFull;
 		id = num;
 		num++;
 		
@@ -133,6 +135,16 @@ public class Customer{
 
 	public void setSatisfied(boolean satisfied) {
 		this.satisfied = satisfied;
+	}
+
+
+	public String getSelfFull() {
+		return selfFull;
+	}
+
+
+	public void setSelfFull(String selfFull) {
+		this.selfFull = selfFull;
 	}
 	
 	
