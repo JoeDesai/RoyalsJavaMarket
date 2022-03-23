@@ -10,7 +10,7 @@ public class Simulator {
 		Queues queue1 = new Queues();
 		Queues queue2 = new Queues();
 		Queues queue3 = new Queues();
-		Queues queue4 = new Queues();
+		QueuesSelfCheckout queue4 = new QueuesSelfCheckout();
 		ArrayList<Customer> customers = loadData();
 		ArrayList<Queues> queues = new ArrayList<>();
 		Customer e = new Customer();
@@ -22,26 +22,29 @@ public class Simulator {
 		Queues shortest = queues.get(0);
 		ArrayList<Integer> notInUse = new ArrayList<>();
 
-		placeCustomers(customers, e, queues, data, shortest, notInUse);
+		placeCustomers(customers, e, queues, data, shortest, notInUse, queue4);
 
 		printData(data, customers, notInUse.size());
 
 	}
 
 	public static void placeCustomers(ArrayList<Customer> customers, Customer e, ArrayList<Queues> queues,
-			ArrayList<String> data, Queues shortest, ArrayList<Integer> notInUse) {
+			ArrayList<String> data, Queues shortest, ArrayList<Integer> notInUse, QueuesSelfCheckout queue4) {
 
 		boolean moreCust = true;
 		int time = 1;
 		int cat = 0;
 		int custNum = 0;
 		char letter = 0;
+		int selfCheckCounter = 0;
+		int fullCheckCounter = 0;
+		
 
 		while (moreCust) {
 
 			if (customers.get(custNum).getSelfFull().equalsIgnoreCase("full")) {
 				// first customer starts at 1 minute always
-				if (time == customers.get(custNum).getInterarrivalTime() && custNum == 0) {
+				if (time == customers.get(custNum).getInterarrivalTime() && fullCheckCounter == 0) {
 					cat = time;
 					e = customers.get(custNum);
 					e.setArrivalTime(time);
@@ -51,6 +54,7 @@ public class Simulator {
 					e.setWaitTime(0);
 					e.setLane((char) (65));
 					data.add(log(e));
+					fullCheckCounter++;
 					custNum++;
 				}
 
@@ -81,18 +85,39 @@ public class Simulator {
 					data.add(log(e));
 					custNum++;
 
-					if (custNum == customers.size()) {
-						moreCust = false;
-					}
-
 				}
 			} else {
-
+				
+				
+				
 				if (cat + customers.get(custNum).getInterarrivalTime() == time) {
 					e = customers.get(custNum);
+					queue4.add(e);
+					selfCheckCounter++;
+					
+					if(selfCheckCounter == 0) {
+						e.setLane('D');
+					} else if(selfCheckCounter == 1) {
+						e.setLane('E');
+					}
+					
+					if (queue4.size() == 0||queue4.size() == 1) {
+						e.setWaitTime(0);
+
+					} else {
+						int numInQueue = queue4.size() - 1;
+						e.setWaitTime(queue4.get(numInQueue).getDepartureTime() - time);
+					}
 					
 					
 				}
+				
+				cat = time;
+				e.setArrivalTime(time);
+				e.setDepartureTime(cat + e.getServiceTime() + e.getWaitTime());
+				data.add(log(e));
+				custNum++;
+				
 			}
 			for (Customer c : customers) {
 				if (time == c.getDepartureTime()) {
@@ -106,6 +131,23 @@ public class Simulator {
 					case 'C':
 						queues.get(2).removeFirst();
 						break;
+					case 'D':
+						if(queue4.size()>2) {
+							queue4.removeFirst();
+							queue4.get(0).setLane('D');
+							
+						}else {
+							queue4.remove(0);
+						}
+						break;
+					case 'E':
+						if(queue4.size()>2) {
+							queue4.removeSecond();
+							queue4.get(1).setLane('E');
+						}else {
+							queue4.remove(1);
+						}
+						break;
 					}
 				}
 			}
@@ -116,8 +158,11 @@ public class Simulator {
 					// time registers are not in use
 				}
 			}
+			
 			time++;
-
+			if (custNum == customers.size()) {
+				moreCust = false;
+			}
 		}
 
 	}
