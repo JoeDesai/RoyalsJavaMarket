@@ -88,6 +88,11 @@ public class Simulator {
 				}
 			} else {
 
+				if (cat + customers.get(custNum).getInterarrivalTime() == time) {
+					e = customers.get(custNum);
+					
+					
+				}
 			}
 			for (Customer c : customers) {
 				if (time == c.getDepartureTime()) {
