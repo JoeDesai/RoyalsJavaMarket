@@ -35,7 +35,7 @@ public class Customer{
 
 	//regular to string
 	public String toString() {
-		return "Customer number: " + id + ", Interarrival Time: " + interarrivalTime +", Service Time: " + serviceTime;
+		return "Customer number: " + id + ", Interarrival Time: " + interarrivalTime +", Service Time: " + serviceTime+ "		LANE: " +getLane();
 	}
 	
 	//to string for writing to file
