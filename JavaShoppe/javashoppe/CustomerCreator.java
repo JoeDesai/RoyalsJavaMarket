@@ -30,19 +30,21 @@ public class CustomerCreator {
 	public ArrayList<Customer> createCustomers() {
 		String selfFull = "";
 		
-		int tmp = (int) ( Math.random() * 2 + 1);
-        if (tmp == 1) {
-            //full service queue
-        	selfFull = "full";
-        }
-        else if (tmp == 2) {
-            //self service queue
-        	selfFull = "self";
-        }
+		
     
 		
 		for (int i = 0; i < numCust; i++) {
-
+			
+			double tmp = Math.random();
+	        if (tmp <= .5) {
+	            //full service queue
+	        	selfFull = "full";
+	        }
+	        else if (tmp > .5) {
+	            //self service queue
+	        	selfFull = "self";
+	        }
+	        
 			// calculates the times between arrival and service time for each customer
 			int arrivalTime = ((int) (Math.random() * (maxInter - minInter + 1)) + minInter);
 			int serviceTime = ((int) (Math.random() * (maxServ - minServ + 1)) + minServ);
