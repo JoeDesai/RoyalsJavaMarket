@@ -80,13 +80,93 @@ class QueuesSelfCheckout
        return count;
     }
     
+    
+    //adds at any index
+    public void add(int index, Customer e)
+    {
+         if (index < 0  || index > size()) 
+         {
+             String message = String.valueOf(index);
+             throw new IndexOutOfBoundsException(message);
+         }
+         
+         // Index is at least 0
+         if (index == 0)
+         {
+             // New element goes at beginning
+             first = new Node(e, first);
+             if (last == null)
+                 last = first;
+             return;
+         }
+         
+         // Set a reference pred to point to the node that
+         // will be the predecessor of the new node
+         Node pred = first;        
+         for (int k = 1; k <= index - 1; k++)        
+         {
+            pred = pred.next;           
+         }
+         
+         // Splice in a node containing the new element
+         pred.next = new Node(e, pred.next);  
+         
+         // Is there a new last element ?
+         if (pred.next.next == null)
+             last = pred.next;         
+    }
+    
+    //removes at any index
+    
+    public Customer remove(int index)
+    {
+       if (index < 0 || index >= size())
+       {  
+           String message = String.valueOf(index);
+           throw new IndexOutOfBoundsException(message);
+       }
+       
+       Customer element;  // The element to return     
+       if (index == 0)
+       {
+          // Removal of first item in the list
+          element = first.value;    
+          first = first.next;
+          if (first == null)
+              last = null;             
+       }
+       else
+       {
+          // To remove an element other than the first,
+          // find the predecessor of the element to
+          // be removed.
+          Node pred = first;
+          
+          // Move pred forward index - 1 times
+          for (int k = 1; k <= index -1; k++)
+              pred = pred.next;
+          
+          // Store the value to return
+          element = pred.next.value;
+          
+          // Route link around the node to be removed
+          pred.next = pred.next.next;  
+          
+          // Check if pred is now last
+          if (pred.next == null)
+              last = pred;              
+       }
+       return element;        
+    }  
+    
+    
     /**
        The add method adds an element to
 		 the end of the list.
        @param e The value to add to the
 		 end of the list.       
     */
-    
+
     public void add(Customer e)
     {
       if (isEmpty()) 
@@ -101,6 +181,9 @@ class QueuesSelfCheckout
           last = last.next;
       }      
     }
+    
+    
+    
     
    
     /**
@@ -131,49 +214,25 @@ class QueuesSelfCheckout
                   out of bounds.     
     */
     
+    //removes first person and replaces him with next person in line
+    
     public Customer removeFirst()
     {
+    	Customer killed = remove(0);
+    	Customer nextInLine = get(1);
+    	add(0,nextInLine);
+    	remove(2);
     	
-       int index = 0;
-    	
-       if (index >= size())
-       {  
-           String message = String.valueOf(index);
-           throw new IndexOutOfBoundsException(message);
-       }
-       
-       Customer element;  // The element to return     
-
-          // Removal of first item in the list
-          element = first.value;    
-          first = first.next;
-          if (first == null)
-              last = null;             
-       
-       return element;        
+    	return killed;
     }  
+    
     
   //removes second item in queue
     public Customer removeSecond()
     {
+    	Customer killed = remove(1);
+    	return killed;
 
-       int index = 0;
-
-       if (index >= size())
-       {
-           String message = String.valueOf(index);
-           throw new IndexOutOfBoundsException(message);
-       }
-
-       Customer element;  // The element to return
-
-          // Removal of first item in the list
-          element = first.next.value;
-          first.next =  first.next.next;
-          if (first == null)
-              last = null;
-
-       return element;
     }
     //gets specific value in the linked list
     public Customer get(int index) {
