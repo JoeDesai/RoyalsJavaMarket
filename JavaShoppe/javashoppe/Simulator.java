@@ -36,15 +36,17 @@ public class Simulator {
 		int cat = 0;
 		int custNum = 0;
 		char letter = 0;
+		// these counters are used to see if the customer is the first in line or not
 		int selfCheckCounter = 0;
 		int fullCheckCounter = 0;
-		
 
 		while (moreCust) {
 
+			System.out.println(customers.get(custNum).getSelfFull());// for debugging purposes
+
 			if (customers.get(custNum).getSelfFull().equalsIgnoreCase("full")) {
 				// first customer starts at 1 minute always
-				if (time == customers.get(custNum).getInterarrivalTime() && fullCheckCounter == 0) {
+				if (fullCheckCounter == 0) {
 					cat = time;
 					e = customers.get(custNum);
 					e.setArrivalTime(time);
@@ -87,37 +89,43 @@ public class Simulator {
 
 				}
 			} else {
-				
-				
-				
+
+				System.out.println("in else statement");
+
+				// this if never gets triggered
 				if (cat + customers.get(custNum).getInterarrivalTime() == time) {
+					System.out.println("test in if statement");
+					System.out.println(customers.get(custNum).getSelfFull());
 					e = customers.get(custNum);
+					System.out.print(e.getSelfFull());
+
+					cat = time;
 					queue4.add(e);
-					selfCheckCounter++;
-					
-					if(selfCheckCounter == 0) {
+
+					if (selfCheckCounter == 0) {
 						e.setLane('D');
-					} else if(selfCheckCounter == 1) {
+					} else if (selfCheckCounter == 1) {
 						e.setLane('E');
 					}
-					
-					if (queue4.size() == 0||queue4.size() == 1) {
+
+					// increments self check counter
+					selfCheckCounter++;
+
+					if (queue4.size() == 0 || queue4.size() == 1) {
 						e.setWaitTime(0);
 
 					} else {
 						int numInQueue = queue4.size() - 1;
 						e.setWaitTime(queue4.get(numInQueue).getDepartureTime() - time);
 					}
-					
-					
+
+					cat = time;
+					e.setArrivalTime(time);
+					e.setDepartureTime(cat + e.getServiceTime() + e.getWaitTime());
+					data.add(log(e));
+					custNum++;
+
 				}
-				
-				cat = time;
-				e.setArrivalTime(time);
-				e.setDepartureTime(cat + e.getServiceTime() + e.getWaitTime());
-				data.add(log(e));
-				custNum++;
-				
 			}
 			for (Customer c : customers) {
 				if (time == c.getDepartureTime()) {
@@ -132,19 +140,19 @@ public class Simulator {
 						queues.get(2).removeFirst();
 						break;
 					case 'D':
-						if(queue4.size()>2) {
+						if (queue4.size() > 2) {
 							queue4.removeFirst();
 							queue4.get(0).setLane('D');
-							
-						}else {
+
+						} else {
 							queue4.remove(0);
 						}
 						break;
 					case 'E':
-						if(queue4.size()>2) {
+						if (queue4.size() > 2) {
 							queue4.removeSecond();
 							queue4.get(1).setLane('E');
-						}else {
+						} else {
 							queue4.remove(1);
 						}
 						break;
@@ -158,7 +166,7 @@ public class Simulator {
 					// time registers are not in use
 				}
 			}
-			
+
 			time++;
 			if (custNum == customers.size()) {
 				moreCust = false;
@@ -199,7 +207,7 @@ public class Simulator {
 
 	public static String log(Customer c) {
 		String note = "";
-
+		// System.out.println(c.getSelfFull());
 		if (c.getWaitTime() == 0) {
 			note = "Open Lane...Immediate Service";
 		} else {
