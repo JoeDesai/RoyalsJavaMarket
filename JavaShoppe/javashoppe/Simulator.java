@@ -10,6 +10,7 @@ public class Simulator {
 		Queues queue1 = new Queues();
 		Queues queue2 = new Queues();
 		Queues queue3 = new Queues();
+		Queues queue4 = new Queues();
 		ArrayList<Customer> customers = loadData();
 		ArrayList<Queues> queues = new ArrayList<>();
 		Customer e = new Customer();
@@ -38,53 +39,61 @@ public class Simulator {
 
 		while (moreCust) {
 
-			// first customer starts at 1 minute always
-			if (time == customers.get(custNum).getInterarrivalTime() && custNum == 0) {
-				cat = time;
-				e = customers.get(custNum);
-				e.setArrivalTime(time);
-				e.setDepartureTime(cat + e.getServiceTime());
-				queues.get(0).add(e); // add first customer to first linkedlist queue (queue1)
-				letter = 'A';
-				e.setWaitTime(0);
-				e.setLane((char) (65));
-				data.add(log(e));
-				custNum++;
-			}
+			if (customers.get(custNum).getSelfFull().equalsIgnoreCase("full")) {
+				// first customer starts at 1 minute always
+				if (time == customers.get(custNum).getInterarrivalTime() && custNum == 0) {
+					cat = time;
+					e = customers.get(custNum);
+					e.setArrivalTime(time);
+					e.setDepartureTime(cat + e.getServiceTime());
+					queues.get(0).add(e); // add first customer to first linkedlist queue (queue1)
+					letter = 'A';
+					e.setWaitTime(0);
+					e.setLane((char) (65));
+					data.add(log(e));
+					custNum++;
+				}
 
-			if (cat + customers.get(custNum).getInterarrivalTime() == time) {
-				e = customers.get(custNum);
-				shortest = queues.get(2);
-				letter = (char) (65);
-				for (int j = queues.size() - 1; j >= 0; j--) {
-					if (queues.get(j).size() <= shortest.size()) {
-						shortest = queues.get(j);
-						e.setLane((char) (65 + j));
+				if (cat + customers.get(custNum).getInterarrivalTime() == time) {
+					e = customers.get(custNum);
+					shortest = queues.get(2);
+					letter = (char) (65);
+					for (int j = queues.size() - 1; j >= 0; j--) {
+						if (queues.get(j).size() <= shortest.size()) {
+							shortest = queues.get(j);
+							e.setLane((char) (65 + j));
 
-						if (queues.get(j).size() == 0) {
-							e.setWaitTime(0);
+							if (queues.get(j).size() == 0) {
+								e.setWaitTime(0);
 
-						} else {
-							int numInQueue = queues.get(j).size() - 1;
-							e.setWaitTime(queues.get(j).get(numInQueue).getDepartureTime() - time);
+							} else {
+								int numInQueue = queues.get(j).size() - 1;
+								e.setWaitTime(queues.get(j).get(numInQueue).getDepartureTime() - time);
 
+							}
 						}
+
+					}
+					cat = time;
+					e.setArrivalTime(time);
+					e.setDepartureTime(cat + e.getServiceTime() + e.getWaitTime());
+					shortest.add(e);
+					data.add(log(e));
+					custNum++;
+
+					if (custNum == customers.size()) {
+						moreCust = false;
 					}
 
 				}
-				cat = time;
-				e.setArrivalTime(time);
-				e.setDepartureTime(cat + e.getServiceTime() + e.getWaitTime());
-				shortest.add(e);
-				data.add(log(e));
-				custNum++;
+			} else {
 
-				if (custNum == customers.size()) {
-					moreCust = false;
+				if (cat + customers.get(custNum).getInterarrivalTime() == time) {
+					e = customers.get(custNum);
+					
+					
 				}
-
 			}
-
 			for (Customer c : customers) {
 				if (time == c.getDepartureTime()) {
 					switch (c.getLane()) {
@@ -153,9 +162,9 @@ public class Simulator {
 					+ c.getServiceBeginsTime() + "; Leaves @ " + c.getDepartureTime() + "; Wait: " + c.getWaitTime();
 		}
 
-		String l1 = "    " + c.getId() + "     | " + c.getArrivalTime() + "               |    " + c.getServiceTime()
-				+ "    |  " + c.getLane() + "  |    " + c.getSelfFull() + "  |    " + c.getDepartureTime()
-				+ "              |    " + note;
+		String l1 = "    " + c.getId() + "     | " + c.getArrivalTime() + "             		  |    "
+				+ c.getServiceTime() + "    |  " + c.getLane() + "  |    " + c.getSelfFull() + "  |    "
+				+ c.getDepartureTime() + "              |    " + note;
 
 		return l1;
 	}
