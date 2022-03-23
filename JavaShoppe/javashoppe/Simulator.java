@@ -42,9 +42,9 @@ public class Simulator {
 
 		while (moreCust) {
 
-			System.out.println(customers.get(custNum).getSelfFull());// for debugging purposes
+			//System.out.println("customer" +customers.get(custNum).getId()+ " lane" +customers.get(custNum).getSelfFull());// for debugging purposes
 
-			if (customers.get(custNum).getSelfFull().equalsIgnoreCase("full")) {
+			if (cat + customers.get(custNum).getInterarrivalTime() == time && customers.get(custNum).getSelfFull().equalsIgnoreCase("full")) {
 				// first customer starts at 1 minute always
 				if (fullCheckCounter == 0) {
 					cat = time;
@@ -90,30 +90,48 @@ public class Simulator {
 				}
 			} else {
 
-				System.out.println("in else statement");
+				//System.out.println("in else statement");
 
-				// this if never gets triggered
-				if (cat + customers.get(custNum).getInterarrivalTime() == time) {
-					System.out.println("test in if statement");
-					System.out.println(customers.get(custNum).getSelfFull());
+				if (selfCheckCounter == 0 && cat + customers.get(custNum).getInterarrivalTime() == time) {
 					e = customers.get(custNum);
-					System.out.print(e.getSelfFull());
+					e.setLane('D');
+					e.setWaitTime(0);
+					e.setArrivalTime(time);
+					e.setDepartureTime(time + e.getServiceTime());
+					customers.get(custNum).setArrivalTime(time);
+					customers.get(custNum).setDepartureTime(cat + e.getServiceTime() + e.getWaitTime());
+					queue4.add(e);
+					data.add(log(e));
+					cat = time;
+					selfCheckCounter++;
+					custNum++;
+				} else if (selfCheckCounter == 1 && cat + customers.get(custNum).getInterarrivalTime() == time) {
+					e = customers.get(custNum);
+					e.setLane('E');
+					e.setWaitTime(0);
+					e.setArrivalTime(time);
+					e.setDepartureTime(time + e.getServiceTime());
+					queue4.add(e);
+					data.add(log(e));
+					cat = time;
+					selfCheckCounter++;
+					custNum++;
+				}
+				
+				if (cat + customers.get(custNum).getInterarrivalTime() == time && selfCheckCounter > 1) {
+
+					//System.out.println("test in if statement");
+					//System.out.println(customers.get(custNum).getSelfFull());
+					e = customers.get(custNum);
+					//System.out.print(e.getSelfFull());
 
 					cat = time;
 					queue4.add(e);
-
-					if (selfCheckCounter == 0) {
-						e.setLane('D');
-					} else if (selfCheckCounter == 1) {
-						e.setLane('E');
-					}
-
 					// increments self check counter
 					selfCheckCounter++;
 
 					if (queue4.size() == 0 || queue4.size() == 1) {
 						e.setWaitTime(0);
-
 					} else {
 						int numInQueue = queue4.size() - 1;
 						e.setWaitTime(queue4.get(numInQueue).getDepartureTime() - time);
@@ -143,6 +161,7 @@ public class Simulator {
 						if (queue4.size() > 2) {
 							queue4.removeFirst();
 							queue4.get(0).setLane('D');
+							System.out.println(queue4.get(0).toString());
 
 						} else {
 							queue4.remove(0);
@@ -152,6 +171,7 @@ public class Simulator {
 						if (queue4.size() > 2) {
 							queue4.removeSecond();
 							queue4.get(1).setLane('E');
+							System.out.println(queue4.get(1).toString());
 						} else {
 							queue4.remove(1);
 						}
@@ -172,6 +192,8 @@ public class Simulator {
 				moreCust = false;
 			}
 		}
+		
+		
 
 	}
 
