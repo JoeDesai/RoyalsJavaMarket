@@ -35,8 +35,8 @@ public class CustomerCreator {
 		
 		for (int i = 0; i < numCust; i++) {
 			
-			//double tmp = Math.random();
-			double tmp = 1;
+			double tmp = Math.random();
+			//double tmp = 1;
 	        if (tmp <= .5) {
 	            //full service queue
 	        	selfFull = "full";
