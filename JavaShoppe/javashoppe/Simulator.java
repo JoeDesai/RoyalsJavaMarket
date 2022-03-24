@@ -180,6 +180,9 @@ public class Simulator {
 					case 'D':
 						if (queue4.size() > 2) {
 							queue4.removeFirst();
+						} else if (queue4.size() == 2) {
+							queue4.remove(0);
+							queue4.add(0, new Customer());
 						} else {
 							queue4.remove(0);
 						}
