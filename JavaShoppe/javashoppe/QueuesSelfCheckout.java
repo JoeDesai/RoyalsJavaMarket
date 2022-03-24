@@ -246,7 +246,7 @@ class QueuesSelfCheckout
     	Node pred = first;
         
         // Move pred forward index - 1 times
-        for (int k = 1; k <= index -1; k++)
+        for (int k = 0; k <= index -1; k++)
             pred = pred.next;
         
         // Store the value to return
