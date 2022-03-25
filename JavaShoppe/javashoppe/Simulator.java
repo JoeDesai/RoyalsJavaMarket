@@ -122,9 +122,6 @@ public class Simulator {
 
 				if (cat + customers.get(custNum).getInterarrivalTime() == time && selfCheckCounter > 1) {
 
-					if (custNum == 7) {
-						System.out.println("Placeholder for debug");
-					}
 					// System.out.println("test in if statement");
 					// System.out.println(customers.get(custNum).getSelfFull());
 					e = customers.get(custNum);
@@ -253,23 +250,6 @@ public class Simulator {
 		return letThereBeCustomers.createCustomers();
 
 	}
-
-//	public static String log(Customer c) {
-//		String note = "";
-//		// System.out.println(c.getSelfFull());
-//		if (c.getWaitTime() == 0) {
-//			note = "Open Lane...Immediate Service";
-//		} else {
-//			note = "All busy... Goes into " + c.getLane() + " @ " + c.getArrivalTime() + "; Service Begins @ "
-//					+ c.getServiceBeginsTime() + "; Leaves @ " + c.getDepartureTime() + "; Wait: " + c.getWaitTime();
-//		}
-//
-//		String l1 = "    " + c.getId() + "     | " + c.getArrivalTime() + "             		  |    "
-//				+ c.getServiceTime() + "    |  " + c.getLane() + "  |    " + c.getSelfFull() + "  |    "
-//				+ c.getDepartureTime() + "              |    " + note;
-//
-//		return l1;
-//	}
 
 	public static void printData(ArrayList<String> data, ArrayList<Customer> c, int notUsedTime) {
 		DecimalFormat df = new DecimalFormat("##.##");

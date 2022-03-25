@@ -53,7 +53,6 @@ public class CustomerCreator {
 			int serviceTime = ((int) (Math.random() * (maxServ - minServ + 1)) + minServ);
 
 			Customer newCust = new Customer(arrivalTime, serviceTime, selfFull, percentSlower);
-			System.out.println(newCust.getSelfFull());
 			
 			customers.add(newCust);
 			System.out.println(newCust.toString());
