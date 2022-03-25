@@ -9,6 +9,7 @@ public class CustomerCreator {
 	private int minServ;
 	private int maxServ;
 	private int numCust;
+	private int percentSlower;
 	private ArrayList<Customer> customers;
 
 	public CustomerCreator() {
@@ -16,13 +17,14 @@ public class CustomerCreator {
 	}
 
 	public CustomerCreator(int minInterT, int maxInterT, int minServT, int maxServT, int numCustomers,
-			ArrayList<Customer> cust) {
+			ArrayList<Customer> cust, int perSlower) {
 		minInter = minInterT;
 		maxInter = maxInterT;
 		minServ = minServT;
 		maxServ = maxServT;
 		numCust = numCustomers;
 		customers = cust;
+		percentSlower = perSlower;
 		
 
 	}
@@ -50,8 +52,7 @@ public class CustomerCreator {
 			int arrivalTime = ((int) (Math.random() * (maxInter - minInter + 1)) + minInter);
 			int serviceTime = ((int) (Math.random() * (maxServ - minServ + 1)) + minServ);
 
-			Customer newCust = new Customer(arrivalTime, serviceTime, selfFull);
-			System.out.println(newCust.getSelfFull());
+			Customer newCust = new Customer(arrivalTime, serviceTime, selfFull, percentSlower);
 			
 			customers.add(newCust);
 			System.out.println(newCust.toString());

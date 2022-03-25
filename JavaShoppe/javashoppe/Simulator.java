@@ -1,5 +1,6 @@
 package javashoppe;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -39,6 +40,7 @@ public class Simulator {
 		// these counters are used to see if the customer is the first in line or not
 		int selfCheckCounter = 0;
 		int fullCheckCounter = 0;
+		int lastDeparture = 0;
 
 		while (moreCust) {
 
@@ -85,7 +87,9 @@ public class Simulator {
 					e.setArrivalTime(time);
 					e.setDepartureTime(cat + e.getServiceTime() + e.getWaitTime());
 					shortest.add(e);
-					custNum++;
+					if (custNum < customers.size() - 1) {
+						custNum++;
+					}
 
 				}
 			} else {
@@ -94,12 +98,6 @@ public class Simulator {
 
 				if (selfCheckCounter == 0 && cat + customers.get(custNum).getInterarrivalTime() == time) {
 					e = customers.get(custNum);
-
-					customers.get(custNum).setLane('D');
-					customers.get(custNum).setWaitTime(0);
-					customers.get(custNum).setArrivalTime(time);
-					customers.get(custNum).setDepartureTime(time + customers.get(custNum).getServiceTime());
-
 					e.setLane('D');
 					e.setWaitTime(0);
 					e.setArrivalTime(time);
@@ -111,12 +109,6 @@ public class Simulator {
 					custNum++;
 				} else if (selfCheckCounter == 1 && cat + customers.get(custNum).getInterarrivalTime() == time) {
 					e = customers.get(custNum);
-
-					customers.get(custNum).setLane('E');
-					customers.get(custNum).setWaitTime(0);
-					customers.get(custNum).setArrivalTime(time);
-					customers.get(custNum).setDepartureTime(time + customers.get(custNum).getServiceTime());
-
 					e.setLane('E');
 					e.setWaitTime(0);
 					e.setArrivalTime(time);
@@ -136,7 +128,14 @@ public class Simulator {
 					// System.out.print(e.getSelfFull());
 
 					cat = time;
-					queue4.add(e);
+
+					if (queue4.size() > 0) {
+						if (queue4.get(0).getId() < 0 && queue4.size() > 2) {
+							queue4.removeFirst();
+						} else if (queue4.get(0).getId() < 0 && queue4.size() == 1) {
+							queue4.remove(0);
+						}
+					}
 					// increments self check counter
 					selfCheckCounter++;
 
@@ -144,19 +143,19 @@ public class Simulator {
 						e.setWaitTime(0);
 					} else {
 						int numInQueue = queue4.size() - 1;
-						e.setWaitTime(queue4.get(numInQueue - 1).getDepartureTime() - time);
+						if (customers.get(0).getDepartureTime() < customers.get(0).getDepartureTime()) {
+							numInQueue = queue4.size() - 2;
+						}
+						e.setWaitTime(queue4.get(numInQueue).getDepartureTime() - time);
 					}
 
 					cat = time;
 					e.setArrivalTime(time);
 					e.setDepartureTime(cat + e.getServiceTime() + e.getWaitTime());
-
-					customers.get(custNum).setArrivalTime(time);
-					customers.get(custNum).setDepartureTime(
-							cat + customers.get(custNum).getServiceTime() + customers.get(custNum).getWaitTime());
-
-					custNum++;
-
+					queue4.add(e);
+					if (custNum < customers.size() - 1) {
+						custNum++;
+					}
 				}
 			}
 			if (queue4.size() > 0) {
@@ -164,7 +163,9 @@ public class Simulator {
 			}
 			if (queue4.size() > 1) {
 				queue4.get(1).setLane('E');
+				// customers.get(queue4.get(1).getId() - 1).setLane('E');
 			}
+
 			for (Customer c : customers) {
 				if (time == c.getDepartureTime()) {
 					switch (c.getLane()) {
@@ -182,7 +183,7 @@ public class Simulator {
 							queue4.removeFirst();
 						} else if (queue4.size() == 2) {
 							queue4.remove(0);
-							queue4.add(0, new Customer());
+							queue4.add(0, new Customer(-10));
 						} else {
 							queue4.remove(0);
 						}
@@ -206,7 +207,13 @@ public class Simulator {
 			}
 
 			time++;
-			if (custNum == customers.size()) {
+
+			if (customers.get(custNum).getDepartureTime() > lastDeparture) {
+				lastDeparture = customers.get(custNum).getDepartureTime();
+			}
+
+			if (custNum == customers.size() - 1 && customers.get(customers.size() - 2).getDepartureTime()
+					+ customers.get(customers.size() - 1).getServiceTime() == time) {
 				moreCust = false;
 			}
 
@@ -235,36 +242,27 @@ public class Simulator {
 		int numCust = scan.nextInt();
 
 		System.out.println("Percent slower");
-		double perSlower = scan.nextDouble();
+		int perSlower = scan.nextInt();
 
-		CustomerCreator letThereBeCustomers = new CustomerCreator(minInterT, maxInterT, minServT, maxServT, numCust,
-				customers);
+		CustomerCreator letThereBeCustomers = new CustomerCreator(minInterT, maxInterT, minServT, maxServT, numCust+1,
+				customers, perSlower);
 
 		return letThereBeCustomers.createCustomers();
 
 	}
 
-//	public static String log(Customer c) {
-//		String note = "";
-//		// System.out.println(c.getSelfFull());
-//		if (c.getWaitTime() == 0) {
-//			note = "Open Lane...Immediate Service";
-//		} else {
-//			note = "All busy... Goes into " + c.getLane() + " @ " + c.getArrivalTime() + "; Service Begins @ "
-//					+ c.getServiceBeginsTime() + "; Leaves @ " + c.getDepartureTime() + "; Wait: " + c.getWaitTime();
-//		}
-//
-//		String l1 = "    " + c.getId() + "     | " + c.getArrivalTime() + "             		  |    "
-//				+ c.getServiceTime() + "    |  " + c.getLane() + "  |    " + c.getSelfFull() + "  |    "
-//				+ c.getDepartureTime() + "              |    " + note;
-//
-//		return l1;
-//	}
-
 	public static void printData(ArrayList<String> data, ArrayList<Customer> c, int notUsedTime) {
-		double totalWait = 0;
+		DecimalFormat df = new DecimalFormat("##.##");
+		double totalWaitFull = 0;
+		double totalWaitSelf = 0;
+		double averageWaitSelf = 0;
+		double averageWaitFull = 0;
+		int numFull = 0;
+		double waitTime = 0;
 		int satisfied = 0;
 		int dissatisfied = 0;
+		c.remove(c.size() - 1);
+
 		System.out.println(
 				"\n    Cus #    | Arrival Time (absolute) |Service Time | LOC | Self/Full | Departure Time (absolute) | Notes");
 		for (String d : data) {
@@ -272,7 +270,13 @@ public class Simulator {
 		}
 
 		for (Customer cust : c) {
-			totalWait += cust.getWaitTime();
+			if (cust.getSelfFull().equalsIgnoreCase("full")) {
+				totalWaitFull += cust.getWaitTime();
+				numFull++;
+			} else {
+				totalWaitSelf += cust.getWaitTime();
+			}
+
 			if (cust.isSatisfied()) {
 				satisfied++;
 			} else {
@@ -284,9 +288,16 @@ public class Simulator {
 			if (cust.getWaitTime() == 0) {
 				note = "Open Lane...Immediate Service";
 			} else {
-				note = "All busy... Goes into " + cust.getLane() + " @ " + cust.getArrivalTime() + "; Service Begins @ "
-						+ cust.getServiceBeginsTime() + "; Leaves @ " + cust.getDepartureTime() + "; Wait: "
-						+ cust.getWaitTime();
+				if(cust.getSelfFull().equalsIgnoreCase("full")) {
+					note = "All busy... Goes into " + cust.getLane() + " @ " + cust.getArrivalTime() + "; Service Begins @ "
+							+ cust.getServiceBeginsTime() + "; Leaves @ " + cust.getDepartureTime() + "; Wait: "
+							+ cust.getWaitTime();
+				}else {
+					note = "All busy... Goes into Self Checkout Line @ " + cust.getArrivalTime() + "; Service Begins @ "
+							+ cust.getServiceBeginsTime() + "; Leaves @ " + cust.getDepartureTime() + "; Wait: "
+							+ cust.getWaitTime();
+				}
+				
 			}
 
 			String l1 = "    " + cust.getId() + "     | " + cust.getArrivalTime() + "             		  |    "
@@ -294,10 +305,17 @@ public class Simulator {
 					+ cust.getDepartureTime() + "              |    " + note;
 
 			System.out.println(l1);
+
 		}
-		totalWait = (double) totalWait / c.size();
-		System.out.println("Average Wait Time: " + totalWait + "\nTotal time checkouts were not in use: " + notUsedTime
-				+ "\nCustomer Satisfaction: " + satisfied + " satisfied (<5 min) " + dissatisfied
+		
+
+		averageWaitFull = (double) totalWaitFull / numFull;
+		averageWaitSelf = (double) totalWaitSelf / (c.size() - numFull);
+		waitTime = (double) (totalWaitSelf + totalWaitFull) / (double) c.size();
+
+		System.out.println("Average Wait Time: " + df.format(waitTime) + "\nSelf Checkout Average Wait Time: " + df.format(averageWaitSelf)
+				+ "\nFull Service Average Wait Time: " + df.format(averageWaitFull) + "\nTotal time checkouts were not in use: "
+				+ notUsedTime + "\nCustomer Satisfaction: " + satisfied + " satisfied (<5 min) " + dissatisfied
 				+ " dissatisfied (>=5 min)");
 
 	}

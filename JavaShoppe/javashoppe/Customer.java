@@ -21,21 +21,30 @@ public class Customer{
 		id = num;
 		num++;
   }
-	
+	public Customer(int negative) {
+		id = negative;
+	}
 	
 	//full constructor
-	public Customer(int interT, int servT, String selfOrFull) {
-		serviceTime = servT;
+	public Customer(int interT, int servT, String selfOrFull, int perSlower) {
 		interarrivalTime = interT;
 		selfFull = selfOrFull;
 		id = num;
 		num++;
 		
+		if(selfFull.equalsIgnoreCase("self")) {
+			double percent = (double) (perSlower + 100) /  100;
+			percent = servT * percent;
+			serviceTime = (int) percent;
+		}else {
+			serviceTime = servT;
+		}
+		
 	}
 
 	//regular to string
 	public String toString() {
-		return "Customer number: " + id + ", Interarrival Time: " + interarrivalTime +", Service Time: " + serviceTime+ "		LANE: " +getLane();
+		return "Customer number: " + id + ", Interarrival Time: " + interarrivalTime +", Service Time: " + serviceTime;
 	}
 	
 	//to string for writing to file
