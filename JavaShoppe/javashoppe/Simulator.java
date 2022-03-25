@@ -98,12 +98,6 @@ public class Simulator {
 
 				if (selfCheckCounter == 0 && cat + customers.get(custNum).getInterarrivalTime() == time) {
 					e = customers.get(custNum);
-
-					customers.get(custNum).setLane('D');
-					customers.get(custNum).setWaitTime(0);
-					customers.get(custNum).setArrivalTime(time);
-					customers.get(custNum).setDepartureTime(time + customers.get(custNum).getServiceTime());
-
 					e.setLane('D');
 					e.setWaitTime(0);
 					e.setArrivalTime(time);
@@ -115,12 +109,6 @@ public class Simulator {
 					custNum++;
 				} else if (selfCheckCounter == 1 && cat + customers.get(custNum).getInterarrivalTime() == time) {
 					e = customers.get(custNum);
-
-					customers.get(custNum).setLane('E');
-					customers.get(custNum).setWaitTime(0);
-					customers.get(custNum).setArrivalTime(time);
-					customers.get(custNum).setDepartureTime(time + customers.get(custNum).getServiceTime());
-
 					e.setLane('E');
 					e.setWaitTime(0);
 					e.setArrivalTime(time);
@@ -167,10 +155,6 @@ public class Simulator {
 					cat = time;
 					e.setArrivalTime(time);
 					e.setDepartureTime(cat + e.getServiceTime() + e.getWaitTime());
-
-					customers.get(custNum).setArrivalTime(time);
-					customers.get(custNum).setDepartureTime(
-							cat + customers.get(custNum).getServiceTime() + customers.get(custNum).getWaitTime());
 					queue4.add(e);
 					if (custNum < customers.size() - 1) {
 						custNum++;
