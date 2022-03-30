@@ -31,7 +31,7 @@ public class Simulator {
 		Queues shortest = queues.get(0);
 		ArrayList<Integer> notInUse = new ArrayList<>();
 
-		placeCustomers(customers, e, queues, data, shortest, notInUse, queue4);
+		//placeCustomers(customers, e, queues, data, shortest, notInUse, queue4);
 
 		printData(data, customers, notInUse.size());
 
@@ -142,5 +142,127 @@ public class Simulator {
 				+ " dissatisfied (>=5 min)");
 
 	}
+	
+	public static int feed(ArrayList<Customer> custs, ArrayList<Queues> queues, int time, int numCust) {
+
+        //manually assigns first customer and sets it's arrival time
+        if(numCust == 0) {
+            //if first customer is full service
+            if(time == custs.get(numCust).getArrivalTime() && custs.get(numCust).getSelfFull().equals("full")) {
+                //sets arrival time
+                custs.get(numCust).setArrivalTime(time);
+                //set wait time and add to correct queue
+                custs.get(numCust).setWaitTime(0);
+                queues.get(0).add(custs.get(numCust));
+
+            }
+            //if first customer is self service
+            if(time == custs.get(numCust).getArrivalTime() && custs.get(numCust).getSelfFull().equals("self")) {
+                //sets arrival time
+                custs.get(numCust).setArrivalTime(time);
+                //adds self service customers to the only queue for self serve
+                queues.get(queues.size()-1).add(custs.get(numCust));
+            }
+            numCust++;
+        }
+      //sets full service customers to correct queue
+
+        else if(time == custs.get(numCust).getInterarrivalTime() + custs.get(numCust-1).getArrivalTime() &&custs.get(numCust).getSelfFull().equals("full")){
+            //sets arrival time
+            custs.get(numCust).setArrivalTime(time);
+
+            Queues shortest = queues.get(0);
+
+            //find the smallest queue
+            for (int j = queues.size() - 2; j >= 0; j--) {
+
+                if (queues.get(j).size() <= shortest.size()) {
+                    shortest = queues.get(j);
+                    //adds customer to correct queue when queue is empty
+                    if (queues.get(j).size() == 0) {
+                        custs.get(numCust).setWaitTime(0);
+                        queues.get(j).add(custs.get(numCust));
+                    //sets customer to correct queue and sets its wait time
+                    } else {
+                        int numInQueue = queues.get(j).size() - 1;
+                        custs.get(numCust).setWaitTime(queues.get(j).get(numInQueue).getDepartureTime() - time);
+                        queues.get(j).add(custs.get(numCust));
+                    }
+
+                }
+
+            }
+
+
+            numCust++;
+        }
+
+        //adds self service customers to the only queue for self serve
+        else if(time == custs.get(numCust).getInterarrivalTime() + custs.get(numCust-1).getArrivalTime() &&custs.get(numCust).getSelfFull().equals("self")){
+
+            //sets to last queue in arraylist
+            queues.get(queues.size()-1).add(custs.get(numCust));
+
+            //sets arrival time
+            custs.get(numCust).setArrivalTime(time);
+
+
+            numCust++;
+        }
+
+
+
+
+        return numCust;
+    }//sets full service customers to correct queue
+
+    else if(time == custs.get(numCust).getInterarrivalTime() + custs.get(numCust-1).getArrivalTime() &&custs.get(numCust).getSelfFull().equals("full")){
+        //sets arrival time
+        custs.get(numCust).setArrivalTime(time);
+
+        Queues shortest = queues.get(0);
+
+        //find the smallest queue
+        for (int j = queues.size() - 2; j >= 0; j--) {
+
+            if (queues.get(j).size() <= shortest.size()) {
+                shortest = queues.get(j);
+                //adds customer to correct queue when queue is empty
+                if (queues.get(j).size() == 0) {
+                    custs.get(numCust).setWaitTime(0);
+                    queues.get(j).add(custs.get(numCust));
+                //sets customer to correct queue and sets its wait time
+                } else {
+                    int numInQueue = queues.get(j).size() - 1;
+                    custs.get(numCust).setWaitTime(queues.get(j).get(numInQueue).getDepartureTime() - time);
+                    queues.get(j).add(custs.get(numCust));
+                }
+
+            }
+
+        }
+
+
+        numCust++;
+    }
+
+    //adds self service customers to the only queue for self serve
+    else if(time == custs.get(numCust).getInterarrivalTime() + custs.get(numCust-1).getArrivalTime() &&custs.get(numCust).getSelfFull().equals("self")){
+
+        //sets to last queue in arraylist
+        queues.get(queues.size()-1).add(custs.get(numCust));
+
+        //sets arrival time
+        custs.get(numCust).setArrivalTime(time);
+
+
+        numCust++;
+    }
+
+
+
+
+    return numCust;
+}
 
 }
