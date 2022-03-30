@@ -21,10 +21,7 @@ public class Customer{
 		id = num;
 		num++;
   }
-	public Customer(int negative) {
-		id = negative;
-	}
-	
+		
 	//full constructor
 	public Customer(int interT, int servT, String selfOrFull, int perSlower) {
 		interarrivalTime = interT;

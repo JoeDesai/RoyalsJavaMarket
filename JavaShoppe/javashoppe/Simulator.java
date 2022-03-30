@@ -7,7 +7,15 @@ import java.util.Scanner;
 public class Simulator {
 
 	public static void main(String[] args) {
-
+		boolean moreCust = true;
+		int time = 1;
+		int cat = 0;
+		int custNum = 0;
+		char letter = 0;
+		// these counters are used to see if the customer is the first in line or not
+		int selfCheckCounter = 0;
+		int fullCheckCounter = 0;
+		int lastDeparture = 0;
 		Queues queue1 = new Queues();
 		Queues queue2 = new Queues();
 		Queues queue3 = new Queues();
@@ -29,203 +37,18 @@ public class Simulator {
 
 	}
 
-	public static void placeCustomers(ArrayList<Customer> customers, Customer e, ArrayList<Queues> queues,
-			ArrayList<String> data, Queues shortest, ArrayList<Integer> notInUse, QueuesSelfCheckout queue4) {
-
-		boolean moreCust = true;
-		int time = 1;
-		int cat = 0;
-		int custNum = 0;
-		char letter = 0;
-		// these counters are used to see if the customer is the first in line or not
-		int selfCheckCounter = 0;
-		int fullCheckCounter = 0;
-		int lastDeparture = 0;
-
-		while (moreCust) {
-
-			// System.out.println("customer" +customers.get(custNum).getId()+ " lane"
-			// +customers.get(custNum).getSelfFull());// for debugging purposes
-
-			if (cat + customers.get(custNum).getInterarrivalTime() == time
-					&& customers.get(custNum).getSelfFull().equalsIgnoreCase("full")) {
-				// first customer starts at 1 minute always
-				if (fullCheckCounter == 0) {
-					cat = time;
-					e = customers.get(custNum);
-					e.setArrivalTime(time);
-					e.setDepartureTime(cat + e.getServiceTime());
-					queues.get(0).add(e); // add first customer to first linkedlist queue (queue1)
-					letter = 'A';
-					e.setWaitTime(0);
-					e.setLane((char) (65));
-					fullCheckCounter++;
-					custNum++;
-				}
-
-				if (cat + customers.get(custNum).getInterarrivalTime() == time) {
-					e = customers.get(custNum);
-					shortest = queues.get(2);
-					letter = (char) (65);
-					for (int j = queues.size() - 1; j >= 0; j--) {
-						if (queues.get(j).size() <= shortest.size()) {
-							shortest = queues.get(j);
-							e.setLane((char) (65 + j));
-
-							if (queues.get(j).size() == 0) {
-								e.setWaitTime(0);
-
-							} else {
-								int numInQueue = queues.get(j).size() - 1;
-								e.setWaitTime(queues.get(j).get(numInQueue).getDepartureTime() - time);
-
-							}
-						}
-
-					}
-					cat = time;
-					e.setArrivalTime(time);
-					e.setDepartureTime(cat + e.getServiceTime() + e.getWaitTime());
-					shortest.add(e);
-					if (custNum < customers.size() - 1) {
-						custNum++;
-					}
-
-				}
-			} else {
-
-				// System.out.println("in else statement");
-
-				if (selfCheckCounter == 0 && cat + customers.get(custNum).getInterarrivalTime() == time) {
-					e = customers.get(custNum);
-					e.setLane('D');
-					e.setWaitTime(0);
-					e.setArrivalTime(time);
-					e.setDepartureTime(time + e.getServiceTime());
-					queue4.add(e);
-					// data.add(log(e));
-					cat = time;
-					selfCheckCounter++;
-					custNum++;
-				} else if (selfCheckCounter == 1 && cat + customers.get(custNum).getInterarrivalTime() == time) {
-					e = customers.get(custNum);
-					e.setLane('E');
-					e.setWaitTime(0);
-					e.setArrivalTime(time);
-					e.setDepartureTime(time + e.getServiceTime());
-					queue4.add(e);
-					// data.add(log(e));
-					cat = time;
-					selfCheckCounter++;
-					custNum++;
-				}
-
-				if (cat + customers.get(custNum).getInterarrivalTime() == time && selfCheckCounter > 1) {
-
-					// System.out.println("test in if statement");
-					// System.out.println(customers.get(custNum).getSelfFull());
-					e = customers.get(custNum);
-					// System.out.print(e.getSelfFull());
-
-					cat = time;
-
-					if (queue4.size() > 0) {
-						if (queue4.get(0).getId() < 0 && queue4.size() > 2) {
-							queue4.removeFirst();
-						} else if (queue4.get(0).getId() < 0 && queue4.size() == 1) {
-							queue4.remove(0);
-						}
-					}
-					// increments self check counter
-					selfCheckCounter++;
-
-					if (queue4.size() == 0 || queue4.size() == 1) {
-						e.setWaitTime(0);
-					} else {
-						int numInQueue = queue4.size() - 1;
-						if (customers.get(0).getDepartureTime() < customers.get(0).getDepartureTime()) {
-							numInQueue = queue4.size() - 2;
-						}
-						e.setWaitTime(queue4.get(numInQueue).getDepartureTime() - time);
-					}
-
-					cat = time;
-					e.setArrivalTime(time);
-					e.setDepartureTime(cat + e.getServiceTime() + e.getWaitTime());
-					queue4.add(e);
-					if (custNum < customers.size() - 1) {
-						custNum++;
-					}
-				}
-			}
-			if (queue4.size() > 0) {
-				queue4.get(0).setLane('D');
-			}
-			if (queue4.size() > 1) {
-				queue4.get(1).setLane('E');
-				// customers.get(queue4.get(1).getId() - 1).setLane('E');
-			}
-
-			for (Customer c : customers) {
-				if (time == c.getDepartureTime()) {
-					switch (c.getLane()) {
-					case 'A':
-						queues.get(0).removeFirst();
-						break;
-					case 'B':
-						queues.get(1).removeFirst();
-						break;
-					case 'C':
-						queues.get(2).removeFirst();
-						break;
-					case 'D':
-						if (queue4.size() > 2) {
-							queue4.removeFirst();
-						} else if (queue4.size() == 2) {
-							queue4.remove(0);
-							queue4.add(0, new Customer(-10));
-						} else {
-							queue4.remove(0);
-						}
-						break;
-					case 'E':
-						if (queue4.size() > 2) {
-							queue4.removeSecond();
-						} else {
-							queue4.remove(1);
-						}
-						break;
-					}
-				}
-			}
-			for (int k = 0; k < queues.size(); k++) {
-				if (queues.get(k).size() == 0) {
-					notInUse.add(1);
-					// adds one eliment to the array list equivalent to adding one minute to the
-					// time registers are not in use
-				}
-			}
-
-			time++;
-
-			if (customers.get(custNum).getDepartureTime() > lastDeparture) {
-				lastDeparture = customers.get(custNum).getDepartureTime();
-			}
-
-			if (custNum == customers.size() - 1 && customers.get(customers.size() - 2).getDepartureTime()
-					+ customers.get(customers.size() - 1).getServiceTime() == time) {
-				moreCust = false;
-			}
-
-		}
-
-	}
 
 	public static ArrayList<Customer> loadData() {
 
 		Scanner scan = new Scanner(System.in);
 		ArrayList<Customer> customers = new ArrayList<>();
-
+		
+		System.out.println("Number of full-service lanes:");
+		int numFull = scan.nextInt();
+		
+		System.out.println("Number of self-service lanes");
+		int numSelf = scan.nextInt();
+		
 		System.out.println("Enter minimum interarrival time:  ");
 		int minInterT = scan.nextInt();
 
