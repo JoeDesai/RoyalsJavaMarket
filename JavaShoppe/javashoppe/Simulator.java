@@ -8,36 +8,59 @@ public class Simulator {
 
 	public static void main(String[] args) {
 		boolean moreCust = true;
-		int time = 1;
-		int cat = 0;
-		int custNum = 0;
-		char letter = 0;
-		// these counters are used to see if the customer is the first in line or not
-		int selfCheckCounter = 0;
-		int fullCheckCounter = 0;
-		int lastDeparture = 0;
-		Queues queue1 = new Queues();
-		Queues queue2 = new Queues();
-		Queues queue3 = new Queues();
-		QueuesSelfCheckout queue4 = new QueuesSelfCheckout();
-		ArrayList<Customer> customers = loadData();
+		int time = 0;
+		int numCust = 0;
+
 		ArrayList<Queues> queues = new ArrayList<>();
+		ArrayList<Registers> registers = new ArrayList<>();
+		ArrayList<Customer> customers = loadData(queues, registers);
 		Customer e = new Customer();
-		ArrayList<String> data = new ArrayList<String>();
 
-		queues.add(queue1);
-		queues.add(queue2);
-		queues.add(queue3);
-		Queues shortest = queues.get(0);
-		ArrayList<Integer> notInUse = new ArrayList<>();
+		while (moreCust) {
 
-		// placeCustomers(customers, e, queues, data, shortest, notInUse, queue4);
+			// feed customer into queue
+			numCust = feed(customers, queues, time, numCust);
 
-		printData(data, customers, notInUse.size());
+			// check if the customer at the register is ready to leave (departureTime ==
+			// time), if they are then register.get().removeCustomer();
+			for (int i = 0; i < registers.size() - 1; i++) {
+				if (registers.get(i).getCust().getDepartureTime() == time) {
+					registers.get(i).removeCust();
+				}
+			}
+
+			// Check every register if it is empty,
+			// if a register is empty (null), add next customer that is in queue to register
+			for (int i = 0; i < registers.size() - 1; i++) {
+				if (registers.get(i).getSelfFull().equals("full")) {
+					if (registers.get(i).getCust() == null) { // checks if register is empty
+						if (queues.get(i).size() > 0) { // checks if queue is empty
+							registers.get(i).addCust(queues.get(i).get(0)); // add customer to register
+							queues.get(i).removeFirst(); // remove customer from queue
+						}
+					}
+
+				} else { // if self checkout register
+					if (registers.get(i).getCust() == null) { // checks if self service register is empty
+						if (queues.get(queues.size() - 1).size() > 0) { // checks if last queue (self service queue) is empty
+							registers.get(i).addCust(queues.get(queues.size() - 1).get(0)); // add customer to register
+							queues.get(queues.size() - 1).removeFirst(); // remove customer from queue
+						}
+					}
+				}
+			}
+			time++;
+			if(numCust == customers.size() - 1) {
+				moreCust = false;
+			}
+			//System.out.println(numCust);
+		}
+		System.out.println("EXIT WHILE LOOP");
+		printData(customers, 0); // EDIT THIS CODE (CORRECT IT) TO ADD ALL TIME EMPTY
 
 	}
 
-	public static ArrayList<Customer> loadData() {
+	public static ArrayList<Customer> loadData(ArrayList<Queues> queues, ArrayList<Registers> registers) {
 
 		Scanner scan = new Scanner(System.in);
 		ArrayList<Customer> customers = new ArrayList<>();
@@ -66,14 +89,25 @@ public class Simulator {
 		System.out.println("Percent slower");
 		int perSlower = scan.nextInt();
 
-		CustomerCreator letThereBeCustomers = new CustomerCreator(minInterT, maxInterT, minServT, maxServT, numCust + 1,
+		CustomerCreator letThereBeCustomers = new CustomerCreator(minInterT, maxInterT, minServT, maxServT, numCust,
 				customers, perSlower);
+		registers = new RegisterCreator(numSelf, numFull).createRegisters();
+		// creating queues
+		if (numSelf > 0) {
+			for (int i = 0; i < numFull + 1; i++) {
+				queues.add(new Queues());
+			}
+		} else { // if there are no self checkouts
+			for (int i = 0; i < numFull; i++) {
+				queues.add(new Queues());
+			}
+		}
 
 		return letThereBeCustomers.createCustomers();
 
 	}
 
-	public static void printData(ArrayList<String> data, ArrayList<Customer> c, int notUsedTime) {
+	public static void printData(ArrayList<Customer> c, int notUsedTime) {
 		DecimalFormat df = new DecimalFormat("##.##");
 		double totalWaitFull = 0;
 		double totalWaitSelf = 0;
@@ -87,9 +121,6 @@ public class Simulator {
 
 		System.out.println(
 				"\n    Cus #    | Arrival Time (absolute) |Service Time | LOC | Self/Full | Departure Time (absolute) | Notes");
-		for (String d : data) {
-			// System.out.println(d);
-		}
 
 		for (Customer cust : c) {
 			if (cust.getSelfFull().equalsIgnoreCase("full")) {
@@ -151,6 +182,8 @@ public class Simulator {
 				custs.get(numCust).setArrivalTime(time);
 				// set wait time and add to correct queue
 				custs.get(numCust).setWaitTime(0);
+				// sets departure time
+				custs.get(numCust).setDepartureTime(time + custs.get(numCust).getServiceTime());
 				queues.get(0).add(custs.get(numCust));
 
 			}
@@ -158,6 +191,8 @@ public class Simulator {
 			if (time == custs.get(numCust).getArrivalTime() && custs.get(numCust).getSelfFull().equals("self")) {
 				// sets arrival time
 				custs.get(numCust).setArrivalTime(time);
+				// sets departure time
+				custs.get(numCust).setDepartureTime(time + custs.get(numCust).getServiceTime());
 				// adds self service customers to the only queue for self serve
 				queues.get(queues.size() - 1).add(custs.get(numCust));
 			}
@@ -167,6 +202,7 @@ public class Simulator {
 
 		else if (time == custs.get(numCust).getInterarrivalTime() + custs.get(numCust - 1).getArrivalTime()
 				&& custs.get(numCust).getSelfFull().equals("full")) {
+			System.out.println("setting full service customers to correct queue");
 			// sets arrival time
 			custs.get(numCust).setArrivalTime(time);
 
@@ -179,12 +215,17 @@ public class Simulator {
 					shortest = queues.get(j);
 					// adds customer to correct queue when queue is empty
 					if (queues.get(j).size() == 0) {
-						custs.get(numCust).setWaitTime(0);
-						queues.get(j).add(custs.get(numCust));
 						// sets customer to correct queue and sets its wait time
+						custs.get(numCust).setWaitTime(0);
+						custs.get(numCust).setDepartureTime(
+								time + custs.get(numCust).getServiceTime() + custs.get(numCust).getWaitTime());
+						queues.get(j).add(custs.get(numCust));
+						
 					} else {
 						int numInQueue = queues.get(j).size() - 1;
 						custs.get(numCust).setWaitTime(queues.get(j).get(numInQueue).getDepartureTime() - time);
+						custs.get(numCust).setDepartureTime(
+								time + custs.get(numCust).getServiceTime() + custs.get(numCust).getWaitTime());
 						queues.get(j).add(custs.get(numCust));
 					}
 
@@ -198,12 +239,16 @@ public class Simulator {
 		// adds self service customers to the only queue for self serve
 		else if (time == custs.get(numCust).getInterarrivalTime() + custs.get(numCust - 1).getArrivalTime()
 				&& custs.get(numCust).getSelfFull().equals("self")) {
+			System.out.println("setting self service customers to only queue");
 
-			// sets to last queue in arraylist
-			queues.get(queues.size() - 1).add(custs.get(numCust));
-
+			int numInQueue = queues.get(queues.size() - 1).size() - 1;
 			// sets arrival time
 			custs.get(numCust).setArrivalTime(time);
+			custs.get(numCust).setWaitTime(queues.get(queues.size() - 1).get(numInQueue).getDepartureTime() - time);
+			custs.get(numCust)
+					.setDepartureTime(time + custs.get(numCust).getServiceTime() + custs.get(numCust).getWaitTime());
+			// sets to last queue in arraylist
+			queues.get(queues.size() - 1).add(custs.get(numCust));
 
 			numCust++;
 		}

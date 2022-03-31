@@ -20,12 +20,12 @@ public class RegisterCreator {
 
     public ArrayList<Registers> createRegisters() {
         for (int i = 0; i < numFull; i++) {    //Full checkouts
-            Registers temp = new Registers("Full");
+            Registers temp = new Registers("full");
             reg.add(temp);
         }
 
         for (int j = 0; j < numSelf; j++) {    //self checkouts
-            Registers temp = new Registers("Self");
+            Registers temp = new Registers("self");
             reg.add(temp);
         }
         return reg;
