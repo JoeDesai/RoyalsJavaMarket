@@ -218,7 +218,7 @@ public class Simulator {
 				regFull.add(r.get(i));
 			}
 		}
-
+		//prints debigging data for time not in use
 		System.out.println("Time the last customer leaves: " + time);
 		System.out.println(
 				"Self service time: " + totalSelfServiceTime + "||  Number of self service lanes: " + regSelf.size());
