@@ -17,8 +17,15 @@ public class Simulator {
 		ArrayList<Customer> customers = loadData(queues, registers);
 		Customer e = new Customer();
 
+		
+		
 		while (moreCust) {
-
+			
+			System.out.println("Time: " + time);
+			if(time == 0)
+				System.out.println("Start");
+			
+			
 			// feed customer into queue
 			numCust = feed(customers, queues, time, numCust);
 
@@ -63,12 +70,20 @@ public class Simulator {
 					}
 				}
 			}
+			
+			
 			time++;
 
 			exitWhileLoop = 0;
 			for (int i = 0; i < registers.size() - 1; i++) {
 				if (registers.get(i).getCust() == null) {
 					exitWhileLoop++;
+				}
+				if(registers.get(i).getCust().equals(null)) {
+					System.out.println("Register " + registers.get(i).getRegLetter() + " (" + registers.get(i).getSelfFull() + ")" + ": free");
+				}else {
+					System.out.println("Register " + registers.get(i).getRegLetter() + " (" + registers.get(i).getSelfFull() + ")" + 
+							": Customer " + registers.get(i).getCust().getId());
 				}
 			}
 			if (numCust == customers.size()) {
@@ -212,26 +227,26 @@ public class Simulator {
 		// manually assigns first customer and sets it's arrival time
 		if (numCust == 0) {
 			// if first customer is full service
-			if (time == custs.get(numCust).getArrivalTime() && custs.get(numCust).getSelfFull().equals("full")) {
+			if (time == custs.get(0).getArrivalTime() && custs.get(0).getSelfFull().equals("full")) {
 				// sets arrival time
-				custs.get(numCust).setArrivalTime(time);
+				custs.get(0).setArrivalTime(time);
 				// set wait time and add to correct queue
-				custs.get(numCust).setWaitTime(0);
+				custs.get(0).setWaitTime(0);
 				// sets departure time
-				custs.get(numCust).setDepartureTime(time + custs.get(numCust).getServiceTime());
-				queues.get(0).add(custs.get(numCust));
+				custs.get(0).setDepartureTime(time + custs.get(0).getServiceTime());
+				queues.get(0).add(custs.get(0));
 
 			}
 			// if first customer is self service
-			if (time == custs.get(numCust).getArrivalTime() && custs.get(numCust).getSelfFull().equals("self")) {
+			if (time == custs.get(0).getArrivalTime() && custs.get(0).getSelfFull().equals("self")) {
 				// sets arrival time
-				custs.get(numCust).setArrivalTime(time);
+				custs.get(0).setArrivalTime(time);
 				// sets wait time
-				custs.get(numCust).setWaitTime(0);
+				custs.get(0).setWaitTime(0);
 				// sets departure time
-				custs.get(numCust).setDepartureTime(time + custs.get(numCust).getServiceTime());
+				custs.get(0).setDepartureTime(time + custs.get(numCust).getServiceTime());
 				// adds self service customers to the only queue for self serve
-				queues.get(queues.size() - 1).add(custs.get(numCust));
+				queues.get(queues.size() - 1).add(custs.get(0));
 			}
 			numCust++;
 		}
