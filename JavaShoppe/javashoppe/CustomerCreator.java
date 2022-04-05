@@ -31,7 +31,9 @@ public class CustomerCreator {
 
 	public ArrayList<Customer> createCustomers() {
 		String selfFull = "";
-		
+		int selfCounter = 0;
+		int fullCounter = 0;
+		int sumInterTime = 0;
 		
     
 		
@@ -53,10 +55,24 @@ public class CustomerCreator {
 			int serviceTime = ((int) (Math.random() * (maxServ - minServ + 1)) + minServ);
 
 			Customer newCust = new Customer(arrivalTime, serviceTime, selfFull, percentSlower);
+			sumInterTime = sumInterTime + newCust.getInterarrivalTime();
+			if ((fullCounter == 0) && (selfFull.equalsIgnoreCase("full"))) {
+				newCust.setArrivalTime(sumInterTime);
+				newCust.setWaitTime(0);
+				newCust.setDepartureTime(newCust.getServiceTime()+ newCust.getArrivalTime());
+				fullCounter++;
+			}
+			else if ((selfCounter == 0) && (selfFull.equalsIgnoreCase("self"))) {
+				newCust.setArrivalTime(sumInterTime);
+				newCust.setWaitTime(0);
+				newCust.setDepartureTime(newCust.getServiceTime()+ newCust.getArrivalTime());
+				selfCounter++;
+			}
+			newCust.setArrivalTime(sumInterTime);
 			
 			customers.add(newCust);
 			System.out.println(newCust.toString());
-
+			
 		}
 
 		return customers;

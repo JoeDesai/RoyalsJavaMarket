@@ -3,7 +3,7 @@ package javashoppe;
 public class Registers {
 	public static int id = 65;
 	private char regLetter;
-	private static Customer cust = null;
+	private Customer cust = null;
 	private boolean isFull = false;
 	private String selfFull;
 	private int timeEmpty;
@@ -22,7 +22,7 @@ public Registers(String selfOrFull) {
 }
 
 //getters and setters
-public static void addCust(Customer customers) {
+public void addCust(Customer customers) {
  cust = customers;
 }
 
