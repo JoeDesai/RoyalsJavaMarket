@@ -31,13 +31,14 @@ public class Simulator {
 			
 			
 			// feed customer into queue
+			if(numCust < customers.size())
 			numCust = feed(customers, queues, time, numCust, numSelf);
 
 			// check if the customer at the register is ready to leave (departureTime ==
 			// time), if they are then register.get().removeCustomer();
-			for (int i = 0; i < registers.size() - 1; i++) {
+			for (int i = 0; i < registers.size(); i++) {
 				if (registers.get(i).getCust() != null) {
-					if (registers.get(i).getCust().getDepartureTime() == time) {
+					if (registers.get(i).getCust().getDepartureTime() <= time) {
 						registers.get(i).removeCust(); 
 						System.out.println("Removes customer from register");
 					}
@@ -46,7 +47,7 @@ public class Simulator {
 
 			// Check every register if it is empty,
 			// if a register is empty (null), add next customer that is in queue to register
-			for (int i = 0; i < registers.size() - 1; i++) {
+			for (int i = 0; i < registers.size(); i++) {
 				if (registers.get(i).getSelfFull().equals("full")) {
 					if (registers.get(i).getCust() == null) { // checks if register is empty
 						if (queues.get(i).size() > 0) { // checks if queue is empty
@@ -58,7 +59,7 @@ public class Simulator {
 							System.out.println(queues.get(i).get(0).toString());
 							queues.get(i).removeFirst(); // remove customer from queue
 							//System.out.println("REMOVES CUSTOMER FROM QUEUE\n"+queues.get(i).get(0).toString());
-
+						
 						}
 					}
 
@@ -68,8 +69,15 @@ public class Simulator {
 																		// empty
 							registers.get(i).addCust(queues.get(queues.size() - 1).get(0)); // add customer to register
 							customers.get(registers.get(i).getCust().getId() - 1)
-									.setLane(registers.get(i).getRegLetter()); // setting customers register letter
+							.setLane(registers.get(i).getRegLetter()); // setting customers register letter
 							queues.get(queues.size() - 1).removeFirst(); // remove customer from queue
+							int cat = 0;
+							for(int j=0; j<customers.size(); j++){
+								if(customers.get(j).getLane() == registers.get(i).getCust().getLane()) {
+									cat = customers.get(j).getDepartureTime();
+								}
+							}
+							
 						}
 					}
 				}
@@ -88,8 +96,17 @@ public class Simulator {
 							": Customer " + registers.get(i).getCust().getId());
 				}
 			}
-			if (numCust == customers.size()) {
+			int nullReg = 0;
+			for (int i=0; i< registers.size(); i++) {
+			
+			if (registers.get(i).getCust() == null) {
+				nullReg++;
+				
+			}
+			}
+			if (numCust == customers.size() && nullReg == registers.size()) {
 				moreCust = false;
+				
 			}
 			// System.out.println(numCust);
 		}
