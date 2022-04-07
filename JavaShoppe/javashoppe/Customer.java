@@ -6,7 +6,7 @@ public class Customer{
 	private int serviceBeginsTime;
 	private int serviceTime;
 	private int departureTime;
-	private int waitTime;
+	private int waitTime=0;
 	private int totalTime;
 	private int interarrivalTime;
 	private char lane;
@@ -63,7 +63,7 @@ public class Customer{
 
 	public int getServiceBeginsTime() {
 		
-		return waitTime + arrivalTime;
+		return serviceBeginsTime;
 	}
 
 	public void setServiceBeginsTime(int serviceBeginsTime) {

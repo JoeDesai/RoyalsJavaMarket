@@ -38,6 +38,10 @@ public class Simulator {
 			for (int i = 0; i < registers.size(); i++) {
 				if (registers.get(i).getCust() != null) {
 					if (registers.get(i).getCust().getDepartureTime() <= time) {
+						if(registers.get(i).getSelfFull().equalsIgnoreCase("self")) {
+						registers.get(i).getCust().setDepartureTime(time + registers.get(i).getCust()
+						.getServiceTime() + registers.get(i).getCust().getWaitTime());
+						}
 						registers.get(i).removeCust();
 						System.out.println("Removes customer from register");
 					}
@@ -55,7 +59,8 @@ public class Simulator {
 
 							registers.get(i).addCust(queues.get(i).get(0)); // add customer to register
 							registers.get(i).getCust().setLane(registers.get(i).getRegLetter()); // setting customers
-																									// register letter
+							registers.get(i).getCust().setServiceBeginsTime(time);
+							// register letter
 							System.out.println(queues.get(i).get(0).toString());
 							queues.get(i).removeFirst(); // remove customer from queue
 							// System.out.println("REMOVES CUSTOMER FROM
@@ -69,6 +74,7 @@ public class Simulator {
 						if (queues.get(queues.size() - 1).size() > 0) { // checks if last queue (self service queue) is
 																		// empty
 							registers.get(i).addCust(queues.get(queues.size() - 1).get(0)); // add customer to register
+							registers.get(i).getCust().setServiceBeginsTime(time);
 							customers.get(registers.get(i).getCust().getId() - 1)
 									.setLane(registers.get(i).getRegLetter()); // setting customers register letter
 							queues.get(queues.size() - 1).removeFirst(); // remove customer from queue
@@ -83,7 +89,9 @@ public class Simulator {
 					}
 				}
 			}
-
+			for(int i = 0; i < queues.get(queues.size()-1).size(); i++) {
+				queues.get(queues.size()-1).get(i).setWaitTime(queues.get(queues.size()-1).get(i).getWaitTime() + 1);
+			}
 			time++;
 
 			exitWhileLoop = 0;
@@ -326,12 +334,8 @@ public class Simulator {
 			custs.get(numCust).setArrivalTime(time);
 			if (queues.get(queues.size() - 1).size() == 0) {
 				custs.get(numCust).setWaitTime(0);
-			} else {
-				custs.get(numCust).setWaitTime(queues.get(queues.size() - 1).get(numInQueue).getDepartureTime() - time);
-
-			}
-			custs.get(numCust)
-					.setDepartureTime(time + custs.get(numCust).getServiceTime() + custs.get(numCust).getWaitTime());
+			} 
+			
 			// sets to last queue in arraylist
 			queues.get(queues.size() - 1).add(custs.get(numCust));
 
