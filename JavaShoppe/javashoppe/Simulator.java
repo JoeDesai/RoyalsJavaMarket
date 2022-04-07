@@ -37,11 +37,12 @@ public class Simulator {
 			// time), if they are then register.get().removeCustomer();
 			for (int i = 0; i < registers.size(); i++) {
 				if (registers.get(i).getCust() != null) {
-					if (registers.get(i).getCust().getDepartureTime() <= time) {
+					if ((registers.get(i).getCust().getServiceBeginsTime() + registers.get(i).getCust().getServiceTime()) <= time) {
+						
 						if(registers.get(i).getSelfFull().equalsIgnoreCase("self")) {
-						registers.get(i).getCust().setDepartureTime(time + registers.get(i).getCust()
-						.getServiceTime() + registers.get(i).getCust().getWaitTime());
+						registers.get(i).getCust().setDepartureTime(time);
 						}
+						
 						registers.get(i).removeCust();
 						System.out.println("Removes customer from register");
 					}
