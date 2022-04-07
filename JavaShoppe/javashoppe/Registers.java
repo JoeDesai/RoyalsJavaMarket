@@ -4,7 +4,7 @@ public class Registers {
 	public static int id = 65;
 	private char regLetter;
 	private Customer cust = null;
-	private boolean isFull = false;
+	private int isFull = 0;
 	private String selfFull;
 	private int timeEmpty;
 	
@@ -58,13 +58,7 @@ public void setCust(Customer cust) {
 	this.cust = cust;
 }
 
-public boolean isFull() {
-	return isFull;
-}
 
-public void setFull(boolean isFull) {
-	this.isFull = isFull;
-}
 
 public String getSelfFull() {
 	return selfFull;
@@ -80,6 +74,19 @@ public int getTimeEmpty() {
 
 public void setTimeEmpty(int timeEmpty) {
 	this.timeEmpty = timeEmpty;
+}
+
+public int getIsFull() {
+	if(cust == null) {
+		return 0;
+	}else {
+		return 1;
+
+	}
+}
+
+public void setIsFull(int isFull) {
+	this.isFull = isFull;
 }
 
 

@@ -31,7 +31,7 @@ public class Simulator {
 
 			// feed customer into queue
 			if (numCust < customers.size())
-				numCust = feed(customers, queues, time, numCust, numSelf);
+				numCust = feed(customers, registers, queues, time, numCust, numSelf);
 
 			// check if the customer at the register is ready to leave (departureTime ==
 			// time), if they are then register.get().removeCustomer();
@@ -285,7 +285,7 @@ public class Simulator {
 
 	}
 
-	public static int feed(ArrayList<Customer> custs, ArrayList<Queues> queues, int time, int numCust, int numSelf) {
+	public static int feed(ArrayList<Customer> custs, ArrayList<Registers> registers, ArrayList<Queues> queues, int time, int numCust, int numSelf) {
 
 		if ((time == custs.get(numCust).getArrivalTime()) && custs.get(numCust).getSelfFull().equals("full")) {
 			System.out.println("setting full service customers to correct queue");
@@ -295,9 +295,9 @@ public class Simulator {
 			Queues shortest = queues.get(0);
 
 			// find the smallest queue
-			for (int j = queues.size() - numSelf; j >= 0; j--) {
+			for (int j = queues.size() - (numSelf-1); j >= 0; j--) {
 
-				if (queues.get(j).size() <= shortest.size()) {
+				if ((queues.get(j).size() + registers.get(j).getIsFull()) <= shortest.size()) {
 					shortest = queues.get(j);
 					// adds customer to correct queue when queue is empty
 
