@@ -37,12 +37,13 @@ public class Simulator {
 			// time), if they are then register.get().removeCustomer();
 			for (int i = 0; i < registers.size(); i++) {
 				if (registers.get(i).getCust() != null) {
-					if ((registers.get(i).getCust().getServiceBeginsTime() + registers.get(i).getCust().getServiceTime()) <= time) {
-						
-						if(registers.get(i).getSelfFull().equalsIgnoreCase("self")) {
-						registers.get(i).getCust().setDepartureTime(time);
+					if ((registers.get(i).getCust().getServiceBeginsTime()
+							+ registers.get(i).getCust().getServiceTime()) <= time) {
+
+						if (registers.get(i).getSelfFull().equalsIgnoreCase("self")) {
+							registers.get(i).getCust().setDepartureTime(time);
 						}
-						
+
 						registers.get(i).removeCust();
 						System.out.println("Removes customer from register");
 					}
@@ -90,8 +91,9 @@ public class Simulator {
 					}
 				}
 			}
-			for(int i = 0; i < queues.get(queues.size()-1).size(); i++) {
-				queues.get(queues.size()-1).get(i).setWaitTime(queues.get(queues.size()-1).get(i).getWaitTime() + 1);
+			for (int i = 0; i < queues.get(queues.size() - 1).size(); i++) {
+				queues.get(queues.size() - 1).get(i)
+						.setWaitTime(queues.get(queues.size() - 1).get(i).getWaitTime() + 1);
 			}
 			time++;
 
@@ -107,6 +109,7 @@ public class Simulator {
 									+ ": Customer " + registers.get(i).getCust().getId());
 				}
 			}
+
 			int nullReg = 0;
 			for (int i = 0; i < registers.size(); i++) {
 
@@ -222,13 +225,19 @@ public class Simulator {
 				regFull.add(r.get(i));
 			}
 		}
+		// prints debigging data for time not in use
+		System.out.println("Time the last customer leaves: " + time);
+		System.out.println(
+				"Self service time: " + totalSelfServiceTime + "||  Number of self service lanes: " + regSelf.size());
+		System.out.println(
+				"Full service time: " + totalFullServiceTime + "||  Number of full service lanes: " + regFull.size());
 
-		int selfTimeNotInUse = (time*regSelf.size()) - totalSelfServiceTime;
-		int fullTimeNotInUse = (time*regFull.size()) - totalFullServiceTime;
+		int selfTimeNotInUse = time * regSelf.size() - totalSelfServiceTime;
+		int fullTimeNotInUse = time * regFull.size() - totalFullServiceTime;
 		int totalTime = selfTimeNotInUse + fullTimeNotInUse;
 
 		System.out.println(
-				"\n    Cus #    | Arrival Time (absolute) |Service Time | LOC | Self/Full | Departure Time (absolute) | Notes");
+				"\n Cus #    | Arrival Time (absolute)       | Service Time | LOC | Self/Full| Departure Time (absolute)| Notes");
 
 		for (Customer cust : c) {
 			if (cust.getSelfFull().equalsIgnoreCase("full")) {
@@ -261,9 +270,9 @@ public class Simulator {
 
 			}
 
-			String l1 = "    " + cust.getId() + "     | " + cust.getArrivalTime() + "             		  |    "
-					+ cust.getServiceTime() + "    |  " + cust.getLane() + "  |    " + cust.getSelfFull() + "  |    "
-					+ cust.getDepartureTime() + "              |    " + note;
+			String l1 = "    " + cust.getId() + "     | " + cust.getArrivalTime() + "             		  |      "
+					+ cust.getServiceTime() + "      |  " + cust.getLane() + "  |    " + cust.getSelfFull() + "  |    "
+					+ cust.getDepartureTime() + "                    |    " + note;
 
 			System.out.println(l1);
 
@@ -273,19 +282,17 @@ public class Simulator {
 		averageWaitSelf = (double) totalWaitSelf / (c.size() - numFull);
 		waitTime = (double) (totalWaitSelf + totalWaitFull) / (double) c.size();
 
-		System.out.println("Average Wait Time: " + df.format(waitTime) 
-				+ "\nSelf Checkout Average Wait Time: "+ df.format(averageWaitSelf) 
-				+ "\nFull Service Average Wait Time: " + df.format(averageWaitFull)
+		System.out.println("Average Wait Time: " + df.format(waitTime) + "\nSelf Checkout Average Wait Time: "
+				+ df.format(averageWaitSelf) + "\nFull Service Average Wait Time: " + df.format(averageWaitFull)
 				+ "\nTotal time self checkouts were not in use: " + selfTimeNotInUse
 				+ "\nTotal time full checkouts were not in use: " + fullTimeNotInUse
-				+ "\nTotal time checkouts were not in use: " + totalTime 
-				+ "\nCustomer Satisfaction: " + satisfied
-				+ " satisfied (<5 min) " + dissatisfied 
-				+ " dissatisfied (>=5 min)");
+				+ "\nTotal time checkouts were not in use: " + totalTime + "\nCustomer Satisfaction: " + satisfied
+				+ " satisfied (<5 min) " + dissatisfied + " dissatisfied (>=5 min)");
 
 	}
 
-	public static int feed(ArrayList<Customer> custs, ArrayList<Registers> registers, ArrayList<Queues> queues, int time, int numCust, int numSelf) {
+	public static int feed(ArrayList<Customer> custs, ArrayList<Registers> registers, ArrayList<Queues> queues,
+			int time, int numCust, int numSelf) {
 
 		if ((time == custs.get(numCust).getArrivalTime()) && custs.get(numCust).getSelfFull().equals("full")) {
 			System.out.println("setting full service customers to correct queue");
@@ -295,7 +302,7 @@ public class Simulator {
 			Queues shortest = queues.get(0);
 
 			// find the smallest queue
-			for (int j = queues.size() - (numSelf-1); j >= 0; j--) {
+			for (int j = queues.size() - (numSelf - 1); j >= 0; j--) {
 
 				if ((queues.get(j).size() + registers.get(j).getIsFull()) <= shortest.size()) {
 					shortest = queues.get(j);
@@ -335,8 +342,8 @@ public class Simulator {
 			custs.get(numCust).setArrivalTime(time);
 			if (queues.get(queues.size() - 1).size() == 0) {
 				custs.get(numCust).setWaitTime(0);
-			} 
-			
+			}
+
 			// sets to last queue in arraylist
 			queues.get(queues.size() - 1).add(custs.get(numCust));
 
