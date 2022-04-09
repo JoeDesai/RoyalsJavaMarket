@@ -79,6 +79,7 @@ public class Customer{
 	}
 
 	public int getDepartureTime() {
+		departureTime = serviceBeginsTime + serviceTime;
 		return departureTime;
 	}
 
@@ -87,6 +88,7 @@ public class Customer{
 	}
 
 	public int getWaitTime() {
+		waitTime = serviceBeginsTime - arrivalTime;
 		return waitTime;
 	}
 

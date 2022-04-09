@@ -91,12 +91,11 @@ public class Simulator {
 					}
 				}
 			}
-			for (int i = 0; i < queues.get(queues.size() - 1).size(); i++) {
-				queues.get(queues.size() - 1).get(i)
-						.setWaitTime(queues.get(queues.size() - 1).get(i).getWaitTime() + 1);
-			}
+			//for (int i = 0; i < queues.get(queues.size() - 1).size(); i++) {
+			//	queues.get(queues.size() - 1).get(i)
+			//			.setWaitTime(queues.get(queues.size() - 1).get(i).getWaitTime() + 1);
+			//}
 			time++;
-
 			exitWhileLoop = 0;
 			for (int i = 0; i < registers.size(); i++) {
 				if (registers.get(i).getCust() == null) {
@@ -201,6 +200,10 @@ public class Simulator {
 		double waitTime = 0;
 		int satisfied = 0;
 		int dissatisfied = 0;
+		int satisfiedSelf = 0;
+		int satisfiedFull = 0;
+		int dissatisfiedSelf = 0;
+		int dissatisfiedFull = 0;
 
 		ArrayList<Registers> regSelf = new ArrayList<>();
 		ArrayList<Registers> regFull = new ArrayList<>();
@@ -232,9 +235,9 @@ public class Simulator {
 		System.out.println(
 				"Full service time: " + totalFullServiceTime + "||  Number of full service lanes: " + regFull.size());
 
-		int selfTimeNotInUse = time * regSelf.size() - totalSelfServiceTime;
-		int fullTimeNotInUse = time * regFull.size() - totalFullServiceTime;
-		int totalTime = selfTimeNotInUse + fullTimeNotInUse;
+		double selfTimeNotInUse = time * regSelf.size() - totalSelfServiceTime;
+		double fullTimeNotInUse = time * regFull.size() - totalFullServiceTime;
+		double totalTime = selfTimeNotInUse + fullTimeNotInUse;
 
 		System.out.println(
 				"\n Cus #    | Arrival Time (absolute)       | Service Time | LOC | Self/Full| Departure Time (absolute)| Notes");
@@ -247,11 +250,27 @@ public class Simulator {
 				totalWaitSelf += cust.getWaitTime();
 			}
 
-			if (cust.isSatisfied()) {
+			if (cust.isSatisfied() && cust.getSelfFull().equalsIgnoreCase("self")) {
 				satisfied++;
-			} else {
+				satisfiedSelf++;
+			
+				
+			} 
+			else if (!cust.isSatisfied() && cust.getSelfFull().equalsIgnoreCase("self")) {
+				dissatisfiedSelf++;
 				dissatisfied++;
 			}
+			else if (cust.isSatisfied() && cust.getSelfFull().equalsIgnoreCase("full")) {
+				satisfied++;
+				satisfiedFull++;
+			
+				
+			} 
+			else if (!cust.isSatisfied() && cust.getSelfFull().equalsIgnoreCase("full")) {
+				dissatisfiedFull++;
+				dissatisfied++;
+			}
+			
 
 			String note = "";
 			// System.out.println(c.getSelfFull());
@@ -288,8 +307,27 @@ public class Simulator {
 				+ "\nTotal time full checkouts were not in use: " + fullTimeNotInUse
 				+ "\nTotal time checkouts were not in use: " + totalTime + "\nCustomer Satisfaction: " + satisfied
 				+ " satisfied (<5 min) " + dissatisfied + " dissatisfied (>=5 min)");
+		
+			if((selfTimeNotInUse > fullTimeNotInUse) && (selfTimeNotInUse / totalTime > 0.60)) {
+				if((satisfiedSelf > dissatisfiedSelf) && (satisfiedSelf/ (satisfiedSelf + dissatisfiedSelf) > 0.60)) {
+					System.out.println("We need less self serve registers");
+				}
+				else if ((dissatisfied > satisfied) && {
+					System.out.println("We need less self serve registers");
+				}
+				}
+				else if () {
+					
+				//}	
+			System.out.println("We need ");
+			if(selfTimeNotInUse < fullTimeNotInUse) {
+				System.out.println("We need more self-serve registers and less full serve registers");
+			}
+		}
+		
+		
 
-	}
+	
 
 	public static int feed(ArrayList<Customer> custs, ArrayList<Registers> registers, ArrayList<Queues> queues,
 			int time, int numCust, int numSelf) {
@@ -314,8 +352,8 @@ public class Simulator {
 			if (shortest.size() == 0) {
 				// sets customer to correct queue and sets its wait time
 				custs.get(numCust).setWaitTime(0);
-				custs.get(numCust).setDepartureTime(
-						time + custs.get(numCust).getServiceTime() + custs.get(numCust).getWaitTime());
+				//custs.get(numCust).setDepartureTime(
+				//		custs.get(numCust).getServiceBeginsTime() + custs.get(numCust).getServiceTime());
 				shortest.add(custs.get(numCust));
 
 			} else {
@@ -325,8 +363,8 @@ public class Simulator {
 				} else {
 					custs.get(numCust).setWaitTime(shortest.get(numInQueue).getDepartureTime() - time);
 				}
-				custs.get(numCust).setDepartureTime(
-						time + custs.get(numCust).getServiceTime() + custs.get(numCust).getWaitTime());
+				//custs.get(numCust).setDepartureTime(
+				//		custs.get(numCust).getServiceBeginsTime() + custs.get(numCust).getServiceTime());
 				shortest.add(custs.get(numCust));
 			}
 
