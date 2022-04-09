@@ -91,10 +91,10 @@ public class Simulator {
 					}
 				}
 			}
-			//for (int i = 0; i < queues.get(queues.size() - 1).size(); i++) {
-			//	queues.get(queues.size() - 1).get(i)
-			//			.setWaitTime(queues.get(queues.size() - 1).get(i).getWaitTime() + 1);
-			//}
+			// for (int i = 0; i < queues.get(queues.size() - 1).size(); i++) {
+			// queues.get(queues.size() - 1).get(i)
+			// .setWaitTime(queues.get(queues.size() - 1).get(i).getWaitTime() + 1);
+			// }
 			time++;
 			exitWhileLoop = 0;
 			for (int i = 0; i < registers.size(); i++) {
@@ -253,24 +253,18 @@ public class Simulator {
 			if (cust.isSatisfied() && cust.getSelfFull().equalsIgnoreCase("self")) {
 				satisfied++;
 				satisfiedSelf++;
-			
-				
-			} 
-			else if (!cust.isSatisfied() && cust.getSelfFull().equalsIgnoreCase("self")) {
+
+			} else if (!cust.isSatisfied() && cust.getSelfFull().equalsIgnoreCase("self")) {
 				dissatisfiedSelf++;
 				dissatisfied++;
-			}
-			else if (cust.isSatisfied() && cust.getSelfFull().equalsIgnoreCase("full")) {
+			} else if (cust.isSatisfied() && cust.getSelfFull().equalsIgnoreCase("full")) {
 				satisfied++;
 				satisfiedFull++;
-			
-				
-			} 
-			else if (!cust.isSatisfied() && cust.getSelfFull().equalsIgnoreCase("full")) {
+
+			} else if (!cust.isSatisfied() && cust.getSelfFull().equalsIgnoreCase("full")) {
 				dissatisfiedFull++;
 				dissatisfied++;
 			}
-			
 
 			String note = "";
 			// System.out.println(c.getSelfFull());
@@ -306,28 +300,24 @@ public class Simulator {
 				+ "\nTotal time self checkouts were not in use: " + selfTimeNotInUse
 				+ "\nTotal time full checkouts were not in use: " + fullTimeNotInUse
 				+ "\nTotal time checkouts were not in use: " + totalTime + "\nCustomer Satisfaction: " + satisfied
-				+ " satisfied (<5 min) " + dissatisfied + " dissatisfied (>=5 min)");
-		
-			if((selfTimeNotInUse > fullTimeNotInUse) && (selfTimeNotInUse / totalTime > 0.60)) {
-				if((satisfiedSelf > dissatisfiedSelf) && (satisfiedSelf/ (satisfiedSelf + dissatisfiedSelf) > 0.60)) {
-					System.out.println("We need less self serve registers");
-				}
-				else if ((dissatisfied > satisfied) && {
-					System.out.println("We need less self serve registers");
-				}
-				}
-				else if () {
-					
-				//}	
-			System.out.println("We need ");
-			if(selfTimeNotInUse < fullTimeNotInUse) {
-				System.out.println("We need more self-serve registers and less full serve registers");
-			}
-		}
-		
-		
+				+ " Total satisfied (<5 min) " + dissatisfied + " Total dissatisfied (>=5 min)"
+				+ "\n Self-Service Satisfied: " + satisfiedSelf + " Self-Service Dissatisfied: " + dissatisfiedSelf
+				+ "\n Full-Service Satisfied: " + satisfiedFull + " Full-Service Dissatisfied: " + dissatisfiedFull);
 
-	
+		if (averageWaitSelf > 5) {
+			System.out.println("We need more self serve registers");
+		} 
+		if (averageWaitFull > 5) {
+			System.out.println("We need more full serve registers");
+		}
+		if (averageWaitSelf < 5) {
+			System.out.println("We need less self serve registers");
+		}
+		if (averageWaitFull < 5) {
+			System.out.println("We need less full serve registers");
+		}
+
+	}
 
 	public static int feed(ArrayList<Customer> custs, ArrayList<Registers> registers, ArrayList<Queues> queues,
 			int time, int numCust, int numSelf) {
@@ -339,21 +329,38 @@ public class Simulator {
 
 			Queues shortest = queues.get(0);
 
+			System.out.println("(THISISATEST)");
+
 			// find the smallest queue
-			for (int j = queues.size() - (numSelf - 1); j >= 0; j--) {
+			if (numSelf > 0) {
+				for (int j = queues.size() - 2; j >= 0; j--) {
 
-				if ((queues.get(j).size() + registers.get(j).getIsFull()) <= shortest.size()) {
-					shortest = queues.get(j);
-					// adds customer to correct queue when queue is empty
+					System.out.println("Queue: " + j + " arrayList<queue>.size : " + queues.size()
+							+ " individual queue size: " + queues.get(j).size() + " Register size: "
+							+ registers.get(j).getIsFull() + " (THISISATEST)");
 
+					if ((queues.get(j).size() + registers.get(j).getIsFull()) <= shortest.size()) {
+						shortest = queues.get(j);
+					}
 				}
+			} else {
+				for (int j = queues.size() - 1; j >= 0; j--) {
 
+					System.out.println("Queue: " + j + " arrayList<queue>.size : " + queues.size()
+							+ " individual queue size: " + queues.get(j).size() + " Register size: "
+							+ registers.get(j).getIsFull() + " (THISISATEST)");
+
+					if ((queues.get(j).size() + registers.get(j).getIsFull()) <= shortest.size()) {
+						shortest = queues.get(j);
+					}
+				}
 			}
 			if (shortest.size() == 0) {
 				// sets customer to correct queue and sets its wait time
 				custs.get(numCust).setWaitTime(0);
-				//custs.get(numCust).setDepartureTime(
-				//		custs.get(numCust).getServiceBeginsTime() + custs.get(numCust).getServiceTime());
+				// custs.get(numCust).setDepartureTime(
+				// custs.get(numCust).getServiceBeginsTime() +
+				// custs.get(numCust).getServiceTime());
 				shortest.add(custs.get(numCust));
 
 			} else {
@@ -363,8 +370,9 @@ public class Simulator {
 				} else {
 					custs.get(numCust).setWaitTime(shortest.get(numInQueue).getDepartureTime() - time);
 				}
-				//custs.get(numCust).setDepartureTime(
-				//		custs.get(numCust).getServiceBeginsTime() + custs.get(numCust).getServiceTime());
+				// custs.get(numCust).setDepartureTime(
+				// custs.get(numCust).getServiceBeginsTime() +
+				// custs.get(numCust).getServiceTime());
 				shortest.add(custs.get(numCust));
 			}
 
