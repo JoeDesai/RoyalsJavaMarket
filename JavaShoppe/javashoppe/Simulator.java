@@ -7,27 +7,56 @@ import java.util.Scanner;
 
 public class Simulator {
 
-	public static void main(String[] args) {
+	private int numSelf;
+	private int numFull;
+	private int minInterT;
+	private int maxInterT;
+	private int minServT;
+	private int maxServT;
+	private int numCust;
+	private int perSlower;
+	private ArrayList<String> data;
+	
+	//empty constructor 
+
+	public Simulator() {
+		
+	};
+
+	//full constructor 
+	public Simulator(int ns, int nf, int mnit, int mxit, int mnst, int mxst, int nc, int ps) {
+		numSelf = ns;
+		numFull = nf;
+		minInterT = mnit;
+		maxInterT = mxit;
+		minServT = mnst;
+		maxServT = mxst;
+		numCust = nc;
+		perSlower = ps;
+		
+		
+		// public static void main(String[] args) {
 		boolean moreCust = true;
 		int time = 0;
-		int numCust = 0;
+		
 		int exitWhileLoop = 0;
 		ArrayList<Queues> queues = new ArrayList<>();
 		ArrayList<Registers> registers = new ArrayList<>();
-		ArrayList<Customer> customers = loadData(queues, registers);
+		ArrayList<Customer> customers = loadData(queues, registers, numSelf, numFull, minInterT, maxInterT, minServT, maxServT, numCust, perSlower);
 		Customer e = new Customer();
 
-		int numSelf = 0;
+		int numSelfNonField = 0;
 		for (int i = 0; i < registers.size(); i++) {
 			if (registers.get(i).getSelfFull().equals("self"))
-				numSelf++;
+				numSelfNonField++;
 		}
-
+		
+		int numCustNoneField = 0;
 		while (moreCust) {
 
-			if (numCust < customers.size()) {
+			if (numCustNoneField < customers.size()) {
 				// feed customer into queue and increments numCust
-				numCust = feed(customers, queues, time, numCust, numSelf);
+				numCustNoneField = feed(customers, queues, time, numCustNoneField, numSelfNonField);
 			}
 
 			// check if the customer at the register is ready to leave (departureTime ==
@@ -78,104 +107,85 @@ public class Simulator {
 
 			exitWhileLoop = 0;
 
-			//loops through the registers and counts how many are empty.  If all of them are empty its time for the loop to end
+			// loops through the registers and counts how many are empty. If all of them are
+			// empty its time for the loop to end
 			int emptyCount = 0;
 			for (int i = 0; i < registers.size(); i++) {
 				if (registers.get(i).getCust() == null) {
 					emptyCount++;
-				}else if(registers.get(i).getCust().getDepartureTime() <= time) {
+				} else if (registers.get(i).getCust().getDepartureTime() <= time) {
 					registers.get(i).removeCust();
 				}
 			}
-			
-			//sees if it is time for loop to exit. If not it prints what's going on at each register
-			//debugging - System.out.println(emptyCount + " == " + registers.size() + " && " + numCust + " == " + customers.size());
+
+			// sees if it is time for loop to exit. If not it prints what's going on at each
+			// register
+			// debugging - System.out.println(emptyCount + " == " + registers.size() + " &&
+			// " + numCust + " == " + customers.size());
 			System.out.println("Time: " + time);
 			if (time == 0) {
 				System.out.println("Start");
 			}
-			
-				// prints what is going on at each register
-				for (int i = 0; i < registers.size(); i++) {
-					
-					if (registers.get(i).getCust() == null) {
-						exitWhileLoop++;
-						System.out.println("Register " + registers.get(i).getRegLetter() + " ("
-								+ registers.get(i).getSelfFull() + ")" + ": free");
-					} else {
-						System.out.println(
-								"Register " + registers.get(i).getRegLetter() + " (" + registers.get(i).getSelfFull() + ")"
-										+ ": Customer " + registers.get(i).getCust().getId());
-					}
+
+			// prints what is going on at each register
+			for (int i = 0; i < registers.size(); i++) {
+
+				if (registers.get(i).getCust() == null) {
+					exitWhileLoop++;
+					System.out.println("Register " + registers.get(i).getRegLetter() + " ("
+							+ registers.get(i).getSelfFull() + ")" + ": free");
+				} else {
+					System.out.println(
+							"Register " + registers.get(i).getRegLetter() + " (" + registers.get(i).getSelfFull() + ")"
+									+ ": Customer " + registers.get(i).getCust().getId());
 				}
-				//exits while loop when all registers are empty and all the customers have gone through the system
-				if (emptyCount == registers.size() && numCust == customers.size()) {
-					moreCust = false;
-					System.out.println("End of simulation");
-				}
+			}
+			// exits while loop when all registers are empty and all the customers have gone
+			// through the system
+			if (emptyCount == registers.size() && numCustNoneField == customers.size()) {
+				moreCust = false;
+				System.out.println("End of simulation");
+			}
 
 			// System.out.println(numCust);
 		}
 		System.out.println("EXIT WHILE LOOP");
-		//uses time minus 1 because it the simulation runs one extra minute after the last customer leaves
-		printData(registers, customers, time-1);
+		// uses time minus 1 because it the simulation runs one extra minute after the
+		// last customer leaves
+		data = printData(registers, customers, time - 1);
 
 	}
 
-	public static ArrayList<Customer> loadData(ArrayList<Queues> queues, ArrayList<Registers> registers) {
+	public static ArrayList<Customer> loadData(ArrayList<Queues> queues, ArrayList<Registers> registers,int ns, int nf, int mnit, int mxit, int mnst, int mxst, int nc, int ps ) {
 
 		Scanner scan = new Scanner(System.in);
 		ArrayList<Customer> customers = new ArrayList<>();
 
-		System.out.println("Number of full-service lanes:");
-		int numFull = scan.nextInt();
-
-		System.out.println("Number of self-service lanes");
-		int numSelf = scan.nextInt();
-
-		System.out.println("Enter minimum interarrival time:  ");
-		int minInterT = scan.nextInt();
-
-		System.out.println("Enter maximum interarrival time:  ");
-		int maxInterT = scan.nextInt();
-
-		System.out.println("Enter minimum service time:  ");
-		int minServT = scan.nextInt();
-
-		System.out.println("Enter maximum service time:  ");
-		int maxServT = scan.nextInt();
-
-		System.out.println("Enter the number of customers?");
-		int numCust = scan.nextInt();
-
-		System.out.println("Percent slower");
-		int perSlower = scan.nextInt();
-
-		CustomerCreator letThereBeCustomers = new CustomerCreator(minInterT, maxInterT, minServT, maxServT, numCust,
-				customers, perSlower);
+		CustomerCreator letThereBeCustomers = new CustomerCreator(mnit, mxit, mnst, mxst, nc,
+				customers, ps);
 		// RegisterCreator regCreate = new RegisterCreator(numSelf, numFull);
 		// regArray = new ArrayList<Registers>(regCreate.createRegisters());
 
 		// creating registers
-		for (int i = 0; i < numFull; i++) { // Full checkouts
+		for (int i = 0; i < nf; i++) { // Full checkouts
 			Registers temp = new Registers("full");
 			registers.add(temp);
 			System.out.println(temp.toString());
 		}
 
-		for (int j = 0; j < numSelf; j++) { // self checkouts
+		for (int j = 0; j < ns; j++) { // self checkouts
 			Registers temp = new Registers("self");
 			registers.add(temp);
 			System.out.println(temp.toString());
 		}
 
 		// creating queues
-		if (numSelf > 0) {
-			for (int i = 0; i < numFull + 1; i++) {
+		if (ns > 0) {
+			for (int i = 0; i < nf + 1; i++) {
 				queues.add(new Queues());
 			}
 		} else { // if there are no self checkouts
-			for (int i = 0; i < numFull; i++) {
+			for (int i = 0; i < nf; i++) {
 				queues.add(new Queues());
 			}
 		}
@@ -184,7 +194,9 @@ public class Simulator {
 
 	}
 
-	public static void printData(ArrayList<Registers> r, ArrayList<Customer> c, int time) {
+	public static ArrayList<String> printData(ArrayList<Registers> r, ArrayList<Customer> c, int time) {
+		ArrayList<String> data = new ArrayList<>();
+		
 		DecimalFormat df = new DecimalFormat("##.##");
 		double totalWaitFull = 0;
 		double totalWaitSelf = 0;
@@ -218,7 +230,7 @@ public class Simulator {
 				regFull.add(r.get(i));
 			}
 		}
-		//prints debigging data for time not in use
+		// prints debigging data for time not in use
 		System.out.println("Time the last customer leaves: " + time);
 		System.out.println(
 				"Self service time: " + totalSelfServiceTime + "||  Number of self service lanes: " + regSelf.size());
@@ -231,7 +243,9 @@ public class Simulator {
 
 		System.out.println(
 				"\n Cus #    | Arrival Time (absolute)       | Service Time | LOC | Self/Full| Departure Time (absolute)| Notes");
-
+		
+		data.add("\n Cus #    | Arrival Time (absolute)       | Service Time | LOC | Self/Full| Departure Time (absolute)| Notes");
+		
 		for (Customer cust : c) {
 			if (cust.getSelfFull().equalsIgnoreCase("full")) {
 				totalWaitFull += cust.getWaitTime();
@@ -268,6 +282,7 @@ public class Simulator {
 					+ cust.getDepartureTime() + "                    |    " + note;
 
 			System.out.println(l1);
+			data.add(l1);
 
 		}
 
@@ -275,13 +290,18 @@ public class Simulator {
 		averageWaitSelf = (double) totalWaitSelf / (c.size() - numFull);
 		waitTime = (double) (totalWaitSelf + totalWaitFull) / (double) c.size();
 
-		System.out.println("Average Wait Time: " + df.format(waitTime) + "\nSelf Checkout Average Wait Time: "
+		String summary = "Average Wait Time: " + df.format(waitTime) + "\nSelf Checkout Average Wait Time: "
 				+ df.format(averageWaitSelf) + "\nFull Service Average Wait Time: " + df.format(averageWaitFull)
 				+ "\nTotal time self checkouts were not in use: " + selfTimeNotInUse
 				+ "\nTotal time full checkouts were not in use: " + fullTimeNotInUse
 				+ "\nTotal time checkouts were not in use: " + totalTime + "\nCustomer Satisfaction: " + satisfied
-				+ " satisfied (<5 min) " + dissatisfied + " dissatisfied (>=5 min)");
+				+ " satisfied (<5 min) " + dissatisfied + " dissatisfied (>=5 min)";
+		
+		System.out.println(summary);
+		data.add(summary);
 
+	
+		return data;
 	}
 
 	public static int feed(ArrayList<Customer> custs, ArrayList<Queues> queues, int time, int numCust, int numSelf) {
@@ -347,5 +367,77 @@ public class Simulator {
 
 		return numCust;
 	}
+	
+	//getters and setters
+	public int getNumSelf() {
+		return numSelf;
+	}
 
+	public void setNumSelf(int numSelf) {
+		this.numSelf = numSelf;
+	}
+
+	public int getNumFull() {
+		return numFull;
+	}
+
+	public void setNumFull(int numFull) {
+		this.numFull = numFull;
+	}
+
+	public int getMinInterT() {
+		return minInterT;
+	}
+
+	public void setMinInterT(int minInterT) {
+		this.minInterT = minInterT;
+	}
+
+	public int getMaxInterT() {
+		return maxInterT;
+	}
+
+	public void setMaxInterT(int maxInterT) {
+		this.maxInterT = maxInterT;
+	}
+
+	public int getMinServT() {
+		return minServT;
+	}
+
+	public void setMinServT(int minServT) {
+		this.minServT = minServT;
+	}
+
+	public int getMaxServT() {
+		return maxServT;
+	}
+
+	public void setMaxServT(int maxServT) {
+		this.maxServT = maxServT;
+	}
+
+	public int getNumCust() {
+		return numCust;
+	}
+
+	public void setNumCust(int numCust) {
+		this.numCust = numCust;
+	}
+
+	public int getPerSlower() {
+		return perSlower;
+	}
+
+	public void setPerSlower(int perSlower) {
+		this.perSlower = perSlower;
+	}
+
+	public ArrayList<String> getData() {
+		return data;
+	}
+
+	public void setData(ArrayList<String> data) {
+		this.data = data;
+	}
 }
